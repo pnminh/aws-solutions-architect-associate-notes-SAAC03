@@ -1,6 +1,6 @@
 ![[Pasted image 20221031140904.png]]
 # Polly
-
+Polly -> parrot: mirror saying
 ## TLDR
 This is the oposite of [[Transcribe]] , it does text to speach.
 

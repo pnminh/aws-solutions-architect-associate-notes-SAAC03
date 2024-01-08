@@ -73,3 +73,7 @@ Happens for health checks
 1. Terminate
 2. Launch new
 
+## Standby vs detach
+In summary, standby instances are temporarily removed from the Auto Scaling Group for maintenance or debugging, while detached instances are permanently removed and managed manually outside the group's control. 
+## Predictive vs schedule scaling
+- similar, except predictive uses machine learning to set up scheduled scaling

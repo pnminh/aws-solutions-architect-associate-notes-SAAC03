@@ -197,3 +197,7 @@ AWS family of load balancers. Is used to spread and control traffic to a vertica
 - Analyse historical load
 - ML
 - hands of approach
+
+#### Rate limiting vs API gateway
+- ELB: Does not support natively, need to use WAF rules for that. 
+- API gateway has built-in rate limiting feature

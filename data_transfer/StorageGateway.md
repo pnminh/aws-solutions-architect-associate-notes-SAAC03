@@ -29,6 +29,7 @@ Can be used for a hybrid cloud setup, where data is produced on premise and sync
 ### Volume Gateway
 - Block Storage
 - Backed by [[EBS]] snapshots
+- iSCSI
 
 #### Cached volumes
 - low latency access to most recent data
@@ -37,10 +38,19 @@ Can be used for a hybrid cloud setup, where data is produced on premise and sync
 - dataset on premise, backups are schedules to [[S3]]
 
 ### Tape Gateway
-- uses Virtual Tape libray
+- uses iSCSI virtual tape library (VTL) 
 - for backup processes using physical Tapes
 - can send directly into [[S3]] Glacier
 
 ## Hardware appliance
 - Can be bought from amazon.com
 - Is a harware which will be your gateway (like a firewall)
+
+### vs EBS/EFS/FSx
+- storage gateway may be used with hybrid, when workload is located on-prem
+- Others: require workload to be on AWS
+
+### SMB vs NFS
+- Both Used with file gateway
+- SMB: support cross platform as natively supported by Windows
+- NFS: only on Linux

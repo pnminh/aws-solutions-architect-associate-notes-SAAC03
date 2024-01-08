@@ -3,6 +3,7 @@
 
 ## TLDR
 Speech recognition. Same tech which powers Alexa.
+- linguistic master, lexical -> bot who can understand languages
 
 ## How It Works
 - use speech recognition to convert to text
@@ -12,3 +13,5 @@ Speech recognition. Same tech which powers Alexa.
 - helps 
 - chatbots
 - call center bots
+## Meaning
+Lexical expert

@@ -13,3 +13,7 @@
 ## Instance Store
 - i need max iops
 - my data is not critical
+  
+## File system
+- EBS: SAN
+- EFS: POSIX compliant

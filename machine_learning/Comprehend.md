@@ -3,6 +3,7 @@
 
 ## TLDR
 This AI reads natural language and interprets/processes it. Its a fully managed and serverless service.
+Example: scan all the tweets and find out customers' sentiment
 
 ## Aspects
 - language

@@ -3,6 +3,7 @@
 
 ## TLDR
 Ml based continues monitoring and thread detection service. Helps for Crypto exploits
+- used for AWS account/environment(AWS creds) instead of business app access(e.g. through OKTA)
 
 ## Features
 - thread detection 

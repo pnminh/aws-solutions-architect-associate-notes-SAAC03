@@ -118,6 +118,6 @@ This is network storage attached to an [[EC2]] instance.
 ## Raid
 
 ### Raid 0
-- use if IO is more important than fault tolerance
+- use if IO is more important than fault tolerance(parallel)
 ### Raid 1
-- use if fault tolerance is more important than IO
+- use if fault tolerance is more important than IO(duplicate)

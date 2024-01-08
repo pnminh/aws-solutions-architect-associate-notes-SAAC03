@@ -104,3 +104,32 @@ A stack of AWS resources, more clearly the connectivity and setup options for an
 - unintrusive
 - traffic gets direct to security applicance fleet
 - fleet redicet traffic back
+
+## Note
+- each subnet has 5 IPs not available to use
+- VPC between a /28 netmask and /16 netmask
+## Public subnet
+- create IGw and attach to VPC
+- add 0.0.0.0/0 dest to IGW in the routeables(can be default or a new one, should only be used for public subnets after this)
+
+## Private subnet
+- create new routeable and only attach a private subnet to it
+- create NAT gateway into public subnet
+- add 0.0.0.0/0 to nat-gw for the routeable above
+- to access EC2 instance connect endpoint(for private subnet)=> create VPC endpoint 
+- separate NACL for private subnet: when creating custom NACL, default is deny for both inbound and outbound
+  - need both ephemeral ports(32768-65535) for inbound and outbound
+  - other ports that are required
+
+## Virtual private gateway vs transit gateway
+- Use TGW if:
+You have multiple VPCs in a region that need to connect to each other or your on-premises network.
+You need a centralized and scalable hub for managing your network connections.
+You require complex traffic routing and isolation between networks.
+- Use VGW if:
+You only have a single VPC and need to connect it to a single on-premises network.
+You want a simple and affordable solution for secure remote access.
+You don't need advanced routing or traffic segmentation features.
+## Virtual private gateway vs direct connect gateway
+- Direct connect gateway can connect multiple VPCs and on-prem networks
+- Each VPC uses VGW to connect to DGW

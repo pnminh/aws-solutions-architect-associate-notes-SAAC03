@@ -48,3 +48,23 @@
 - keys are replicated with same id into diffrent region
 - encrypt and decypt in other keys
 - use case to encrypt global services (auroa global, dynamo global tables)
+
+## vs cloudHSM
+- KMS: multi-tenant vault 
+- CloudHSM: dedicated vault
+
+## Customer Managed CMK (Customer-created):
+
+These are CMKs that you create and manage yourself. You have full control over their lifecycle, rotation, and permissions.
+
+## AWS Managed CMK (Service-created):
+
+These are CMKs created and managed by AWS services, such as AWS CloudHSM or AWS Key Management Service itself.
+With AWS Managed CMKs, you don't have direct control over the key's lifecycle or rotation. AWS manages these keys on your behalf.
+
+## Master key:
+- Key that can be used to encrypt/decrypt data key
+- data key is short-lived one that does encryption/decryption of data
+- Envelope Encryption:
+
+The concept of envelope encryption involves using a data key to encrypt the actual data, and then protecting the data key by encrypting it with a CMK. This two-step process helps manage and secure the keys used in encryption.

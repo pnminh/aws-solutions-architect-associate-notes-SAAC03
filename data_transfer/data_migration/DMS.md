@@ -68,3 +68,5 @@ Migrate an exsisting database into another one. Can also do DB shema conversion.
 ### Option 5 
 - use [[DMS]]
 
+## vs SCT
+- SCT is not needed for same db type, DMS is needed for transferring data even with same type

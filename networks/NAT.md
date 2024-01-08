@@ -15,3 +15,5 @@
 - higher bandwith
 - less ops needed
 
+## vs Egress only IGW
+- NAT gateway blocks IPv4 incoming traffic but not IPv6 one, while EIGW blocks only IPv6 traffic but not IPv4 one

@@ -91,3 +91,5 @@ Various  relational databases, manged by aws.
 - RDS child processes
 - RDS processes
 - OS Processes
+## Authentication token
+An authentication token is a unique string of characters that Amazon RDS generates on request. Authentication tokens are generated using AWS Signature Version 4. Each token has a lifetime of 15 minutes. You don't need to store user credentials in the database, because authentication is managed externally using IAM. You can also still use standard database authentication.

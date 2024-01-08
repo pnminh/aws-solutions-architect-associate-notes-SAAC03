@@ -28,3 +28,7 @@ Kubernetes in AWS. [[ECS]] Default options are not Kubernetes, but AWS own tech.
 
 ## Authentification
 - Need a config map to map IAM to Kubernetes RBAC System (is automaticly created)
+
+## etcd encryption
+By using AWS Secret Manager with a new AWS KMS key, you can add an extra layer of security to your EKS cluster's etcd key-value store. To do this, you need to create a new KMS key in the AWS KMS console, then create a new secret in the AWS Secret Manager console, specifying the new KMS key as the encryption key. Finally, you can configure your EKS cluster to use the new secret by creating a Kubernetes secret object that references the AWS Secret Manager secret.
+https://aws.amazon.com/blogs/containers/using-eks-encryption-provider-support-for-defense-in-depth/

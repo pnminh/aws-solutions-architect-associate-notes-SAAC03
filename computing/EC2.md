@@ -210,3 +210,10 @@ Placement strategy for a group ec2 instances
 
 ## Limits
 - by default your account has a maximum limit for ec2 instances based on the total vcpu used, you can submit a request to increase that limit
+
+## Note
+- EC2 instant connect: 
+  - connect to ec2 terminal from AWS console
+  - require public IP(need public subnet-internet gateway)
+  - create EIP from AWS public IP pool
+  - public DNS: ec2-xxx-xxx-xxx-xxx.compute-1.amazonaws.com(xxx-xxx-xxx-xxx public IP)

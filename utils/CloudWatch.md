@@ -135,3 +135,6 @@ Central service for all logs and metrics in AWS.
 ### [[EC2]] Instance recovery
 - Status Check
 - start recovery (move host but keep ips, metadata and placement groups)
+
+### RDS metrics
+ `CloudWatch` gathers metrics about CPU utilization from the `hypervisor` for a DB instance, and `Enhanced Monitoring` gathers its metrics from an `agent` on the instance. As a result, you might find differences between the measurements, because the hypervisor layer performs a small amount of work. 

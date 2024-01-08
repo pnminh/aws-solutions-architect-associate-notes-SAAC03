@@ -139,7 +139,13 @@ Practitioner, especially to learn the basics of the many AWS services.
     packet-per-second (PPS) performance, and lower inter-instance
     latency. Consider if PPS is maxed out.
 
-
+*Custom Metrics(require CloudWatch Monitoring script written in PERL*
+- Memory utilization
+- Disk swap utilization
+- Disk space utilization
+- Page file utilization
+- Log collection
+  
 _*VPC, SUBNETS, NETWORKING*_
 
   * A *VPC* is a virtual network that closely resembles a traditional
@@ -508,8 +514,8 @@ _*VPC, SUBNETS, NETWORKING*_
   * Best practice: use IAM policies to grant users fine-grained control
     to your S3 buckets rather than using bucket ACLs
   * Can use *multi-part upload* to speed up uploads of large files to S3
-
-
+  * Bucket cannot be deleted if bucket policy has deny rule to delete bucket, even if user has delete permission
+  * you can only add 1 SQS or SNS at a time for Amazon S3 events notification
 *Glacier* 
 
   * slow to retrieve, but you can use *Expedited Retrieval* to bring it
@@ -830,7 +836,7 @@ _*SERVICES FOR ARCHITECTURE*_
   * _AWS Control Tower_ provides a single location to easily set up your new well-architected multi-account environment and govern 
     your AWS workloads with rules for security, operations, and internal compliance. 
   * _AWS Resource Access Manager (RAM)_ service  helps you to securely share your resources across AWS accounts or within your 
-    organization or organizational units (OUs) in AWS Organizations
+    organization or organizational units (OUs) in AWS Organizations => allow sharing without creating AWS IAM roles
 
 
 *AWS CloudTrail*
