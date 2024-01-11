@@ -18,3 +18,4 @@ Firewall for a [[VPC]]
 
 ## Active flow inspection
 - intrusion preventions (Managed by AWS)
+- - cannot integrate directly with ELB

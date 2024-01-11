@@ -117,3 +117,5 @@ AWS IAM is a global service. Its used in nearly all other services to control pe
 ### Cross Account
 - attach policy to a resouce ([[S3]])
 - use a role as a proxy (give role access)
+
+You cannot identify a user group as a principal in a policy (such as a resource-based policy) because groups relate to permissions, not authentication, and principals are authenticated IAM entities.

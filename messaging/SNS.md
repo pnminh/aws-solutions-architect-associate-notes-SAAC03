@@ -54,5 +54,5 @@ Message queue with a subscriber model. It can send the same message to alot of d
 
 ## Filtering
 - json policies on a subscriber 
-- will only recive msg which match the filter
+- subscriber will only receive msg which match the filter
 - can be used with fan out to split sns msgs to multiple deticated [[SQS]] queues

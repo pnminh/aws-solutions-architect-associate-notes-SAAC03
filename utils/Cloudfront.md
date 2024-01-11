@@ -95,3 +95,7 @@
 ## Availability
 - can setup origin failover
 - an origin group may have a primary and a secondary origin
+![](2024-01-09-22-49-05.png)
+
+## Host s3 static files that are not publically accessible
+![](2024-01-10-00-01-37.png)

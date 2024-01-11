@@ -72,7 +72,7 @@ AWS Created custom DB tech, very high performan. Useful for global and serverles
 - 1 to 35 days
 - can not be disabled
 - point in time recovery in that timeframe
-
+- can be exported to s3 but needed to be copied first
 ### Manual
 - triggered by user
 - keep as long as user wants
@@ -86,7 +86,14 @@ AWS Created custom DB tech, very high performan. Useful for global and serverles
 - cost effective
 - usful to create staging
 
+### AWS Backup
+- Allow retention above limit of automated backups, e.g 80 days
+- Backup plan does automation with backup that is outside of Aurora automated one, e.g. once a day
 ## Lambda
 
 ### Store Procedure
 - Can trigger a AWS Lambda function from a SP
+
+## Cluster endpoint vs custom endpoint
+- cluster endpoint: main endpoint that allows write to primarydb
+- custom: can include write instance and read instances, or just for read

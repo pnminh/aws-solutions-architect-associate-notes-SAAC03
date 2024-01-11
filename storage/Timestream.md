@@ -26,3 +26,6 @@
 - sage maker
 - grafana (Monitoring Dashboard)
 - any jdbc connection
+
+### vs appstream
+appstream: stream video

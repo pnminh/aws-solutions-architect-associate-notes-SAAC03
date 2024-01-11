@@ -24,3 +24,4 @@ Anaysle and recoginze objects or themes in images or videos.
 - set a minimum confidence threshhold for items that will be flagged
 - optional manual review in amazon augmentet AI (A2I)
 - help comply with regulations
+![](2024-01-09-20-06-46.png)

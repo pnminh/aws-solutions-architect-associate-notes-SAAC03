@@ -28,3 +28,4 @@ AWS Backup is a service to centraly manage and review your backup strategies.
 
 ## Vault Lock
 - backups can not be deleted
+![](2024-01-10-16-19-47.png)

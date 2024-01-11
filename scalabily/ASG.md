@@ -77,3 +77,13 @@ Happens for health checks
 In summary, standby instances are temporarily removed from the Auto Scaling Group for maintenance or debugging, while detached instances are permanently removed and managed manually outside the group's control. 
 ## Predictive vs schedule scaling
 - similar, except predictive uses machine learning to set up scheduled scaling
+
+## Target tracking scaling vs simple scaling
+Target Tracking Scaling: no waiting for cooldown period
+
+Simplicity: Easier to set up and manage.
+Automation: The Auto Scaling group adjusts capacity automatically based on the specified target metric.
+Simple Scaling:
+
+Flexibility: Allows more manual control over specific conditions and actions.
+Configuration: Requires setting up CloudWatch alarms and defining scaling policies based on those alarms.

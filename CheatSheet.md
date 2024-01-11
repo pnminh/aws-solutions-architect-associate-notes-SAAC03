@@ -34,9 +34,11 @@ for the AWS SAA exam, I found it very helpful to study for the AWS Cloud
 Practitioner, especially to learn the basics of the many AWS services.
 
 ## EC2 INSTANCES
-
+![](assets/2024-01-11-04-57-27.png)
+*Billing period*
+- only during running and when instance in stopping state preparing for hibernation only(not billed if instance does not have hibernation feature)
 *300 Instance Types across 5 Instance Families*
-
+- reserve instance always gets billed based on hour until end of contract regardless of state
   * AWS offers over 300 EC2 instance types
     across /5
     instance families/ (general purpose family, memory-optimized,
@@ -137,17 +139,21 @@ Practitioner, especially to learn the basics of the many AWS services.
     terminate unneeded instances, reducing costs
   * **Enhanced networking** provides higher bandwidth, higher
     packet-per-second (PPS) performance, and lower inter-instance
-    latency. Consider if PPS is maxed out.
+    latency. Consider if PPS is maxed out.  
+    Enhanced networking uses single root I/O virtualization (SR-IOV) which provides high performance networking capabilities on supported instance types.
+    Without SR-IOV: Traffic from VMs goes through the hypervisor, which manages the communication between VMs and the physical NIC.
 
+    With SR-IOV: VMs can have direct access to the physical NIC, bypassing the hypervisor for certain types of traffic
+  * Scale-in ![](2024-01-08-13-57-26.png)
 *Custom Metrics(require CloudWatch Monitoring script written in PERL*
 - Memory utilization
 - Disk swap utilization
 - Disk space utilization
 - Page file utilization
 - Log collection
-  
+  *** Enhanced monitoring is only available for RDS and not normal EC2 instances
 _*VPC, SUBNETS, NETWORKING*_
-
+  *bastion host should stay on AWS VPC and on public subnet, only allowing specific sources, e.g. corporate IPs
   * A *VPC* is a virtual network that closely resembles a traditional
     network that you'd operate in your own data center.
   * After you create a VPC, you can add *subnets*. A subnet is a range
@@ -227,13 +233,14 @@ _*VPC, SUBNETS, NETWORKING*_
       o You route traffic from your VPC to the gateway endpoint using
         route tables. Protected by VPC endpoint policies rather than
         Security Groups.
+      S3 Gateway Endpoint:use VPC endpoint policies for access to trusted S3 buckets and not bucket policies as the latter will need to be added to all trusted buckets
 
 
 *3 Types of Network Adapters*
 
  1. ENI - basic type
  2. ENA - for enhanced networking, high bandwidth and low latency
- 3. EFA (fabric adapter) - for high performance computing
+ 3. EFA (fabric adapter) - for high performance computing, bypassing hardware
 
 
 *Security Groups vs. Network ACL (NACL)*
@@ -385,7 +392,7 @@ _*VPC, SUBNETS, NETWORKING*_
 
   * VPN connections go over the internet
   * *AWS Managed site-to-site VPN Connection* is connected between
-    a *Customer Gateway* on the customer side and *Virtual Private Gateway* 
+    a *Customer Gateway* on the customer side. You must create a customer gateway resource in AWS, which provides information to AWS about your customer gateway device. And *Virtual Private Gateway* 
     (VPG, or VPN gateway) that you create at the edge of your
     VPC.​
 
@@ -433,9 +440,6 @@ _*VPC, SUBNETS, NETWORKING*_
         replicated across other instances
   * Very high performance and low latency
   * Can be cost effective since the cost is included in the instance cost
-  * You can hibernate the instance to keep what's in memory and in the
-    EBS, but if you stop or terminate the instance then you lose
-    everything in memory and in the EBS storage.
 
 
 *EBS*
@@ -469,7 +473,9 @@ _*VPC, SUBNETS, NETWORKING*_
   * iSCSI is block protocol, whereas NFS is a file protocol
   * EBS supports encryption of data at rest and encryption of data in
     transit between the instance and the EBS volume. 
-
+  * You can hibernate the instance to keep what's in memory and in the
+    EBS, but if you stop or terminate the instance then you lose
+    everything in memory and in the EBS storage. Hibernation mode cannot be changed(enabled/disabled) after launch
 
 *EFS*
 
@@ -516,11 +522,13 @@ _*VPC, SUBNETS, NETWORKING*_
   * Can use *multi-part upload* to speed up uploads of large files to S3
   * Bucket cannot be deleted if bucket policy has deny rule to delete bucket, even if user has delete permission
   * you can only add 1 SQS or SNS at a time for Amazon S3 events notification
+  * Integration with route53: bucket name has to be the same name with the registered domain, e.g. bucket name should be `www.example.com` if the route 53 domain is `www.example.com`
 *Glacier* 
 
   * slow to retrieve, but you can use *Expedited Retrieval* to bring it
     down to just 1-5min.
-
+  * Public access blocking can be set at account level
+  * Public access: Any bucket or object that grants permissions to AllUsers OR AuthenticatedUsers groups. Additionally any bucket policy that does not grant fixed access (Not "\*") to one of the following is considered public:An AWS principal, user, role, or service principal (e.g. aws:PrincipalOrgID), A set of Classless Inter-Domain Routings (CIDRs) using aws:SourceIp, aws:SourceArn, aws:SourceVpc, aws:SourceVpce, aws:SourceOwner, aws:SourceAccount, s3:x-amz-server-side-encryption-aws-kms-key-id, aws:userid, outside the pattern "AROLEID:*", s3:DataAccessPointArn, s3:DataAccessPointAccount
 
 *Amazon FSx*
 
@@ -542,6 +550,7 @@ _*VPC, SUBNETS, NETWORKING*_
     automatically scales capacity and is ideal for infrequently used
     applications. 
   * Allows the quickest RTO and RPO
+  * Read replica can be promoted
 
 
 *RDS*
@@ -562,7 +571,8 @@ _*VPC, SUBNETS, NETWORKING*_
   * RDS can be restored to a backup taken as recent as 5min ago using
     point-in-time restore (PITR). When you restore, a new instance is
     created from the DB snapshot and you need to point to the new instance.
-
+  * Read replica cannot be promoted
+  * SQLserver: backup taken on primary-> expect IO suspension. Others have backup using secondary
 
 *ElastiCache*
 
@@ -624,9 +634,10 @@ _*VPC, SUBNETS, NETWORKING*_
 *Copying and Converting*
 
   * Use *AWS Schema Conversion Tool (SCT)* to convert a DB schema from
-    one type of DB to another, e.g. from Oracle to Redshift
+    one type of DB to another, e.g. from Oracle to Redshift(heterogenous)
   * Use *Database Migration Service (DMS)* to copy database. Sometimes
     you do SCT convert, then DMS copy. 
+  * Use DMS directly with homogenous source and target(same db engines)
   * Use *AWS DataSync* to copy large amount of data from on-prem to S3,
     EFS, FSx, NFS shares, SMB shares, AWS Snowcone (via Direct
     Connect).  For copying data, not databases. 
@@ -680,7 +691,7 @@ _*SERVICES FOR ARCHITECTURE*_
     instead of SQS (this is similar to using EKS instead of ECS, the
     industry-standard version of containers rather than the Amazon
     proprietary version)
-
+ * decouple apps, similar to SWF(simple workflow)
 
 *Amazon SNS*
 
@@ -693,8 +704,14 @@ _*SERVICES FOR ARCHITECTURE*_
   * 3 Flavours:
     - Kinesis Data Stream: real time data streaming and procesing
         * Kinesis Video Stream: video processing (security cameras, face detection, etc)
-    - Kinesis Data Firehose: data delivery and integration
+    - Kinesis Data Firehose: data delivery and integration, near `realtime`
     - Kinesis Data Analytics: real time analysis of streaming data
+    - Firehose is like a Simple Conveyor Belt:
+
+      Imagine a conveyor belt that takes your data and delivers it automatically to a destination. It's straightforward, easy, and you don't need to worry about the details.
+      Data Streams is like a Busy Highway with Control Towers:
+
+      Now picture a busy data highway where you can control the flow, speed, and destinations of your data. It's like having more say in how your data travels and where it goes.
   * for use cases that require ingestion of real-time data (e.g. IoT
     sensor data)
   * Kinesis data stream is made up of _shards_, which are made up
@@ -728,7 +745,17 @@ _*SERVICES FOR ARCHITECTURE*_
         access. This is specific to CloudFront+S3.
   * *Lambda@Edge* is a feature of CloudFront that lets you run code
     closer to users of your application, which improves performance and
-    reduces latency
+    reduces latency. Alows to run custom code(add header, server different responses)
+  ![](2024-01-09-18-32-48.png) => 
+    - When CloudFront receives a request from a viewer (viewer request)
+
+    - Before CloudFront forwards a request to the origin (origin request)
+
+    - When CloudFront receives a response from the origin (origin response)
+
+    - Before CloudFront returns the response to the viewer (viewer response)
+
+
   * _Field-level encryption_ is a feature that applies extra encryption
     at edge locations to ensure sensitive data provided by the user
     (e.g. PII) is secured end-to-end
@@ -755,6 +782,7 @@ _*SERVICES FOR ARCHITECTURE*_
   * By default, provides you with 2 static IP addresses that are anycast
     from the AWS edge network. You can migrate existing IPv4 (/24) IPs
     rather than creating new.
+  * suitable for non-HTTP, such as gaming(UDP), or HTTP that needs staticIP
 
 
 *AWS STS (Security Token Service)*
@@ -805,8 +833,10 @@ _*SERVICES FOR ARCHITECTURE*_
         in your application. You can't use S3 managed keys client-side
       - Server-side encryption can be done in several ways
           + SSE-C: use customer-provided keys and manage them yourself
-            (on-prem)
-          + SSE-S3: Amazon manages the keys
+            (on-prem)   
+            Headers: x-amz-server-side-encryption-customer-algorithm; x-amz-server-side-encryption-customer-key; x-amz-server-side-encryption-customer-key-MD5
+          + SSE-S3: Amazon manages the keys   
+            Header: x-amz-server-side-encryption
           + SSE-KMS: keys are managed in Amazon Key Management Service
           + CloudHSM: generate and use your own encryption keys, held in
             the cloud in Amazon's HSM
@@ -837,7 +867,10 @@ _*SERVICES FOR ARCHITECTURE*_
     your AWS workloads with rules for security, operations, and internal compliance. 
   * _AWS Resource Access Manager (RAM)_ service  helps you to securely share your resources across AWS accounts or within your 
     organization or organizational units (OUs) in AWS Organizations => allow sharing without creating AWS IAM roles
-
+*Restrict access to resources from a region/country*
+  - Use cloudfont geo-blocking feature
+  - Use WAF 
+  - Route 53(only redirect to an error page for example, and not blocking if using IP)
 
 *AWS CloudTrail*
 
@@ -847,6 +880,9 @@ _*SERVICES FOR ARCHITECTURE*_
     Control Plane Operations
   * Use other tools such as *VPC Flow Logs* to capture network packets
 
+*CICD:
+ - CodeCommit: private git repo
+ - CodeBuild: continuous integration service that compiles source code, runs tests, and produces ready-to-deploy software packages."
 
 ## MANY MORE AWS SERVICES
 
@@ -891,7 +927,7 @@ Practitioner, especially to learn the basics of the many AWS services.
   * *AWS Config*: tracks resource inventory, config history and config
     change notifications for the purpose of security and compliance.
     Assess, audit and evaluate the configurations of AWS resources.
-  * *Amazon AppStream*: streaming service
+  * *Amazon AppStream*: streaming service, not queue
   * *Amazon Kinesis*: collect and process streaming data
   * *Amazon Elastic Transcoder:* convert video and audio files into
     versions that play on phones, tablets and PCs
@@ -904,7 +940,7 @@ Practitioner, especially to learn the basics of the many AWS services.
   * *Amazon MSK*: (Amazon Managed Streaming for Kafka) - Run Kafka clusters on AWS,
     enabling real-time data streaming and processing
   * *AWS IoT Core*: connected devices interact securely with cloud
-    applications
+    applications- related: Monitron: use ML to predict maintenance using sensor on hardware equipment
   * *Amazon Cognito* = authentication for mobile devices. Use /identity
     pools/ to provide temp AWS credentials to guest users. /User
     pools /are user directories. Compatible with SAML identity providers.

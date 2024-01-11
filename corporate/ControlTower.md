@@ -24,3 +24,5 @@ to manage and configure a multi account setup.
 
 ## Further Integration
 - [[SNS]]
+
+In summary, while AWS Organizations provides foundational capabilities for structuring accounts and applying policies, AWS Control Tower is an additional service that offers automation and best practices to simplify the process of setting up and governing a multi-account environment. 

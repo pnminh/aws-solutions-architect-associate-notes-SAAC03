@@ -11,3 +11,7 @@ Instead of using SSH or [[EC2InstanceConnect]] you can use the Session Manager t
 - Runs on linux, win or mac 
 - Send session log data to [[S3]] or [[CloudWatch]] 
 - Shell is open from SSM to [[EC2]] and is herby locked within AWS
+
+## How it works
+- SSM agent from EC2 initiate websocket connection through 443 to AWS Systems manager service
+- EC2 IAM profile role needs to have access to SSM, not the other way around

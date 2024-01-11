@@ -6,7 +6,8 @@
 
 ## Job Bookmarks
 - prevent reproccessing old data
-
+- start where left off in case of interrupted or fails for any reason
+- Job bookmarking works by storing the state of a job's progress in a persistent data store separate from the job itself. 
 ## Views
 - combine and replicate data across multiple data stores with sQL
 - uses a virtual table
@@ -21,3 +22,5 @@
 - compatible with kinesis
 - kafka
 - MSK
+## vs AWS EMR
+- always choose Glue over EMR for ETL as it's serverless and ETL specific

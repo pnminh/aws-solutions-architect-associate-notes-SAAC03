@@ -6,6 +6,7 @@ This is network storage attached to an [[EC2]] instance.
 
 ## Features
 - Network Drive
+- replicated within region
 - persist Data after Termination
 - can only be mounted to one instance at once
 - limited to AZ which it was created
@@ -121,3 +122,7 @@ This is network storage attached to an [[EC2]] instance.
 - use if IO is more important than fault tolerance(parallel)
 ### Raid 1
 - use if fault tolerance is more important than IO(duplicate)
+
+## root vs non root volume
+- root is deleted by default on instance termination
+- non-root is persisted by default on instance termination

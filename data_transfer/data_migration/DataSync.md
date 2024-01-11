@@ -35,3 +35,7 @@ Data Sync is used for a secure one time transfer of data via the internet from a
 
 ## Route
 - Onpremise File System -> On premise Data Sync Agent -> AWS [[DirectConnect]] or Internet -> AWS [[DataSync]] service -> Cloud storage 
+
+## vs storage gateway
+- storage gateway sends cache/small data
+- datasync sends large data

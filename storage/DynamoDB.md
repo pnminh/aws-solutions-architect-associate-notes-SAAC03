@@ -64,3 +64,6 @@ NoSQL Serverless DB. Tons of features and can be global.
 
 ## CLI Created Tabled
 - Autoscaling wont be enabled by default
+## Ondemand backup vs AWS backup
+- ondemand only creates backup in same account and region
+- to copy backup to other regions/accounts, need AWS backup

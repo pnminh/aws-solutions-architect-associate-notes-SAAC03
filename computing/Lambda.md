@@ -49,7 +49,8 @@ AWS Lambda means you dont care about any infrastructure, you just upload a funct
 (1): GBs = amount of ram multiplied by execution time
 
 ## Limits Per Region
-
+The default account limit for Lambda concurrency is up to 1000 executions per second, per region (can be increased). It is therefore most likely that the concurrency execution limit for the account was exceeded.
+If exceed => 429 error
 ### Memory 
 - 128MB to 10GB in 1mb increments
 

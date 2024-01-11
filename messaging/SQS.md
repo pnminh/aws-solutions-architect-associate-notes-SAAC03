@@ -11,7 +11,7 @@ AWS standard queue service. Has ton of features like fifo and multi consumer. Sc
 - message delay up to 15 min
 - unlimited throughput 
 - unlimited numer of messages
-- default retention 4 days, max 14 days
+- default retention 4 days, max 14 days, min 1 min
 - max size 256kbs
 - dynamicaly add concurrency/ read throughput
 - track ack/fail 

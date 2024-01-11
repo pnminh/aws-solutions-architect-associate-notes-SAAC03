@@ -23,7 +23,7 @@ Protect your resources from DDOS Attacks.
 AWS Shield protects against massive crowds trying to overwhelm your website.
 AWS WAF protects against individual visitors trying to sneak in with malicious intent.
 
-AWS Shield is more focused on the network layer (layers 3 and 4).
+AWS Shield is more focused on the network layer (layers 3 and 4), can do level7 DDOS detection with detect attacks like HTTP floods and DNS floods.
 AWS WAF is focused on the application layer (layer 7).
 
 AWS Shield is more capable of preventing DDOS attacks

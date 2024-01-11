@@ -130,10 +130,10 @@ AWS family of load balancers. Is used to spread and control traffic to a vertica
 
 ### SNI (Server Name Indication)
 - clients can use this to specify the hostname they reach
-- how do you load multiple certs on on server to serve multiple https website on one server
+- how do you load multiple certs on on server to serve multiple https website on one server. 
 - client indicateds hostname of the target server in inital handshake
 - only for ALB or NLB or [[Cloudfront]]
-
+- Allow to add up certs instead of re-provision 1 cert with multi SANs
 ### CLB
 - only one ssl cert
 - must use multiple clb if multiple domains via https
@@ -201,3 +201,11 @@ AWS family of load balancers. Is used to spread and control traffic to a vertica
 #### Rate limiting vs API gateway
 - ELB: Does not support natively, need to use WAF rules for that. 
 - API gateway has built-in rate limiting feature
+### Gateway Load balancer
+- proxy 3rd party virtual appliances, e.g. firewall service
+- level 3,4
+### ALB vs NLB
+ALB: cannot use EIP(static IP), no private link
+NLB: can assign static IP and private link. Can front and forward requests to ALB if the features above are required
+### gRPC support
+- only ALB supports as it's level 7

@@ -35,3 +35,8 @@ ECS is AWS Docker Service. You can launch and modify containers as tasks in mult
 
 ## Advanced Use Cases
 - Use [[EventBride]] or [[SQS]] to launch container, process tasks and shut down container afterwards
+
+![](2024-01-09-20-15-07.png)
+
+## Note from tutodojo
+- `EnableTaskIAMRole` is for windows container only

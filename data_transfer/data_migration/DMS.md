@@ -70,3 +70,7 @@ Migrate an exsisting database into another one. Can also do DB shema conversion.
 
 ## vs SCT
 - SCT is not needed for same db type, DMS is needed for transferring data even with same type
+
+## replication instance vs tasks
+- replication instance runs independently of tasks, can take multiple tasks
+- different lifecycle. Once tasks are done, replication instance still runs until explicitly deleted

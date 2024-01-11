@@ -217,3 +217,7 @@ Placement strategy for a group ec2 instances
   - require public IP(need public subnet-internet gateway)
   - create EIP from AWS public IP pool
   - public DNS: ec2-xxx-xxx-xxx-xxx.compute-1.amazonaws.com(xxx-xxx-xxx-xxx public IP)
+  - EIP: term for public IP
+## ENI
+- primary ENI(elastic network interface) is not detachable
+- secondary one can be detached and attached to a different instance

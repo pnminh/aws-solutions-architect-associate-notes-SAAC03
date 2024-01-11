@@ -43,7 +43,7 @@
 - controll access to kms
 - default = everyone in this account can use the key
 - use for cross account
-
+- can also have principal as service, e.g. cloudtrail.amazonaws.com
 ## Multi Region Keys
 - keys are replicated with same id into diffrent region
 - encrypt and decypt in other keys
@@ -68,3 +68,81 @@ With AWS Managed CMKs, you don't have direct control over the key's lifecycle or
 - Envelope Encryption:
 
 The concept of envelope encryption involves using a data key to encrypt the actual data, and then protecting the data key by encrypting it with a CMK. This two-step process helps manage and secure the keys used in encryption.
+
+## Default policy
+- If key created using API: default key allows whole account full access. Account entities still need IAM(policy) with kms access to use KMS: 
+```json
+{
+  "Sid": "Enable IAM User Permissions",
+  "Effect": "Allow",
+  "Principal": {
+    "AWS": "arn:aws:iam::111122223333:root"
+   },
+  "Action": "kms:*",
+  "Resource": "*"
+}
+```
+- If key created on console: 3 parts 
+  - key administrators: manage key, but cannot use it
+  ```json
+  {
+    "Sid": "Allow access for Key Administrators",
+    "Effect": "Allow",
+    "Principal": {"AWS":"arn:aws:iam::111122223333:role/ExampleAdminRole"},
+    "Action": [
+        "kms:Create*",
+        "kms:Describe*",
+        "kms:Enable*",
+        "kms:List*",
+        "kms:Put*",
+        "kms:Update*",
+        "kms:Revoke*",
+        "kms:Disable*",
+        "kms:Get*",
+        "kms:Delete*",
+        "kms:TagResource",
+        "kms:UntagResource",
+        "kms:ScheduleKeyDeletion",
+        "kms:CancelKeyDeletion"
+    ],
+    "Resource": "*"
+  }
+  ```
+  - Key users: users(role/user) who use key directly or delegate to the services integrated with KMS to use it
+  ```json
+    {
+    "Sid": "Allow use of the key",
+    "Effect": "Allow",
+    "Principal": {"AWS": [
+        "arn:aws:iam::111122223333:role/ExampleRole",
+        "arn:aws:iam::444455556666:root"
+    ]},
+    "Action": [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey"
+    ],
+    "Resource": "*"
+    },
+    {
+    "Sid": "Allow attachment of persistent resources",
+    "Effect": "Allow",
+    "Principal": {"AWS": [
+        "arn:aws:iam::111122223333:role/ExampleRole",
+        "arn:aws:iam::444455556666:root"
+    ]},
+    "Action": [
+        "kms:CreateGrant",
+        "kms:ListGrants",
+        "kms:RevokeGrant"
+    ],
+    "Resource": "*",
+    "Condition": {"Bool": {"kms:GrantIsForAWSResource": true}}
+    }  
+  ```
+  Key users require these grant permissions to use their KMS key with integrated services, but these permissions are not sufficient. Key users also need permission to use the integrated services.
+  
+ For lambda
+ ![](2024-01-11-04-34-07.png)

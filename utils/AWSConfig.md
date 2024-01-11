@@ -8,3 +8,6 @@
 ## Rules
 - predefined and customizable
 - did i import a bad cert?
+
+## vs AWS audit manager
+aws audit manager serve compliance against 3rd party, while config servers compliance against its AWS account/organization

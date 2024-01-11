@@ -48,7 +48,8 @@ A stack of AWS resources, more clearly the connectivity and setup options for an
 
 ## VPC Peering
 - connection between 2 VPCs using private adresses
-- not transitive
+- not transitive, e.g vpc-a has peer VPC to vpc-b. Direct connect is set between on-prem network and vpc-a. on-prem network cannot communicate with resources on vpc-b
+  ![](2024-01-09-16-20-26.png)
 - need to setup route tables
 
 ### Transit Gatway
@@ -133,3 +134,11 @@ You don't need advanced routing or traffic segmentation features.
 ## Virtual private gateway vs direct connect gateway
 - Direct connect gateway can connect multiple VPCs and on-prem networks
 - Each VPC uses VGW to connect to DGW
+
+## IPv4 vs v6
+- IPv4 is default for VPC and cannot be removed/disabled
+
+## Gateway endpoint vs interface endpoint
+- Both allow private subnets to access AWS/third party services within AWS network
+- Gateway endpoint uses routable, interface endpoint use private IP that is part of the subnet CIDR
+- Gateway endpoint only supports S3 and dynamoDB

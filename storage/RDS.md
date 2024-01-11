@@ -51,6 +51,8 @@ Various  relational databases, manged by aws.
 - transactions logs are backed up by rds every 5 mins
 - restory any point in time (5 mins ago)
 - 1 to 35 days of retention
+- The default backup retention period is 7 days if you create the DB instance using the console, 1 day if API
+- 
 - if multi az backups span multi region
 
 ### Manual Snapshot
@@ -85,11 +87,19 @@ Various  relational databases, manged by aws.
 - reduces rds and aurora failover time by 66%
 - enforces iam auth for db and store creds in aws secrets manager
 - RDS Proxy is never public and can only be used from within the vpc
-
+- connection pooling/similar to hikariDB?
 ## Enhanced Monitoring
 [[CloudWatch]] feature for RDS
 - RDS child processes
 - RDS processes
 - OS Processes
+- Not available for EC2
 ## Authentication token
 An authentication token is a unique string of characters that Amazon RDS generates on request. Authentication tokens are generated using AWS Signature Version 4. Each token has a lifetime of 15 minutes. You don't need to store user credentials in the database, because authentication is managed externally using IAM. You can also still use standard database authentication.
+
+## vs Aurora Global
+- Auroral global allows read replica in different region to be promoted to primary
+- Normal RDS only allow muti-AZ replica(standby/secondary) to be promoted, not read replicas
+
+## RDS events:
+- Only for DB instance/AWS events, not related to data events(INSERT, DELETE, UPDATE)

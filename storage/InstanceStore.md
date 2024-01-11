@@ -6,3 +6,8 @@
 - Good for buffer, cache, scratch data, temporary content
 - Hardware fail loses data
 - Backup and Replication recommended (manual)
+
+## Behavior
+- When rebooted: still available, EIP still attached to instance
+- When stopped: lost, EIP detached from instance
+- 
