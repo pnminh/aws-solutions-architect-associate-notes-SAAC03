@@ -38,4 +38,6 @@ Data Sync is used for a secure one time transfer of data via the internet from a
 
 ## vs storage gateway
 - storage gateway sends cache/small data
+- only support shared file systems(NFS/SMB/Object store), and not iSCSI
 - datasync sends large data
+![](assets/2024-01-23-14-48-38.png)

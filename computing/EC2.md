@@ -55,7 +55,7 @@ EC2 is a the combination of a virtual mashines and hardware capacity attached to
 - Real time proccessing of big unstructured data
 
 ##### Storage Optimized
-- High amount of Disk IOPs
+- High amount of Disk IOPs/sequential
 
 ###### Use Cases
 - A lot of Datasets in local storage
@@ -150,6 +150,7 @@ EC2 is a the combination of a virtual mashines and hardware capacity attached to
 - Capacity optimized, launch from pool with strongest capacity settings
 
 ## Elastic Ip
+- public IP
 - A static ip which can be attached to Elastic Network Interfaces and other services
 - Used to mask a fail by keeping ip but changing machine
 - Up to 5 per account
@@ -208,9 +209,9 @@ Placement strategy for a group ec2 instances
 - recovers private and public ip, metadat, elastic ip, instandce id
 - data in memory is lost
 
-## Limits
+## Limits(per region)
 - by default your account has a maximum limit for ec2 instances based on the total vcpu used, you can submit a request to increase that limit
-
+- for reserved instances: 20 instances/month, not on vCPU
 ## Note
 - EC2 instant connect: 
   - connect to ec2 terminal from AWS console

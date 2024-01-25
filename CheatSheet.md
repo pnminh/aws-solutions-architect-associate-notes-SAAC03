@@ -4,7 +4,7 @@ topics, including the right choice of AWS services under different
 conditions and constraints, setting up high-availability architectures,
 disaster recovery, hybrid cloud models, networking/routing traffic in
 different configurations, etc.
-
+![](2024-01-12-11-57-05.png)
 *Answering AWS SAA Questions*
 
 Many questions on the exam start by presenting a situation and
@@ -74,7 +74,7 @@ Practitioner, especially to learn the basics of the many AWS services.
   * *Configurations / Launch Templates* used to create new EC2 instances
     using stored parameters such as instance family, instance type, AMI,
     key pair and security groups. Auto-scaling groups can launch
-    instances using config templates. You can't edit a launch config,
+    instances using config templates. You can't `edit` a launch config,
     but you can create a new one and point to it.
   * *User data* - pass up to 16KB of user data at launch that the
     instance can run on startup such as config scripts. Runs on Root User
@@ -98,11 +98,11 @@ Practitioner, especially to learn the basics of the many AWS services.
     instance, but can't directly add additional Instance Store volumes.
   * *Run Command* - run from the AWS Management Console, CLI or SDK, to
     install software, execute Powershell commands and scripts,
-    configuring Windows settings, on live EC2 instances 
+    configuring Windows settings, on live EC2 instances. Required SSM VPC endpoint or NAT Gateway if EC2 stays in private subnet.
 
 
 *Placement Groups*
-
+![](assets/2024-01-22-07-52-17.png)
   * **Cluster placement group** = packs instances close together inside an
     AZ to achieve low latency, high throughput - use for HPC
   * **Partition placement group** = separate instances into logical
@@ -121,22 +121,25 @@ Practitioner, especially to learn the basics of the many AWS services.
     (ASG)* to automatically launch and stop instances, and an *Elastic
     Load Balancer (ELB)* to distribute traffic among the instances
       - *​*specify which subnets the ASG should launch instances into
-      - **Attach Target Groups** to the ASG 
+      - **Attach Target Groups** to the ASG (actually ASG points to target group, 1 ASG can point to multiple target groups for multiple ports)
+      - 1 target group points to 1 port
+      - 1 listener points to 1 port
   * ASG **scaling policies**
       o ​**Simple** - maintain the # of instances, manually change the
-        min-desired/max and attach/detach instances
+        min-desired/max and attach/detach instances. similar to step scaling policies, except they're based on a single scaling adjustment, with a cooldown period between each scaling
       o **Scheduled** - scale based on a scheduled event or recurring
         schedule (e.g. if you know that you have traffic spike every
         morning at 9am)
       o **Dynamic** - scale in response to an event or alarm
       o **Step** - configure multiple changes to scaling based on multiple
         events
-      o **Target Tracking**- uses a custom metric to add/remove instances
+        ![](assets/2024-01-25-14-00-05.png)
+      o **Target Tracking**- select a metric and a target value to represent the ideal average utilization or throughput level. This is similar to how a thermostat maintains a target temperature.
       o _NOTE: AWS recommends using target tracking over step scaling,
         and step scaling over simple scaling in most cases_
 
   * **Cooldown period**- reducing the cooldown period will more quickly
-    terminate unneeded instances, reducing costs
+    terminate unneeded instances, reducing costs, used for simple scaling
   * **Enhanced networking** provides higher bandwidth, higher
     packet-per-second (PPS) performance, and lower inter-instance
     latency. Consider if PPS is maxed out.  
@@ -152,8 +155,10 @@ Practitioner, especially to learn the basics of the many AWS services.
 - Page file utilization
 - Log collection
   *** Enhanced monitoring is only available for RDS and not normal EC2 instances
+  *** Detailed monitoring allows 1 min resolution rather than 5 min in standard one, but not used for custom metrics
 _*VPC, SUBNETS, NETWORKING*_
-  *bastion host should stay on AWS VPC and on public subnet, only allowing specific sources, e.g. corporate IPs
+  * default VPC: has public and private DNS, custom VPC: only has private DNS, need to enable DNS resolution and hostnames for public DNS
+  * bastion host should stay on AWS VPC and on public subnet, only allowing specific sources, e.g. corporate IPs
   * A *VPC* is a virtual network that closely resembles a traditional
     network that you'd operate in your own data center.
   * After you create a VPC, you can add *subnets*. A subnet is a range
@@ -169,12 +174,14 @@ _*VPC, SUBNETS, NETWORKING*_
     resources in two VPCs.
   * Use a *Transit Gateway*, which acts as a central hub, to route
     traffic between your VPCs, VPN connections, and AWS Direct Connect
-    connections.
+    connections. Transit Gateway is per region => Transit Gateway Network Manager for cross-region connectivity between transit gateways
+    ![](assets/2024-01-20-22-34-35.png)
+    diff with VPN cloudhub: cloudhub connects multiple on-prem networks (VPN) to a VPC ![](assets/2024-01-20-22-48-41.png)
   * Connect your VPCs to your on-premises networks using *AWS Virtual
     Private Network (AWS VPN)*.
   * For IPv6, you can use an **Egress-only** internate gateway to allow 
     outbound only communition to the Internet over **IPv6**
-
+  * Network access analyzer: identify unintended network access to VPC
 
 *Subnets*
 
@@ -240,7 +247,7 @@ _*VPC, SUBNETS, NETWORKING*_
 
  1. ENI - basic type
  2. ENA - for enhanced networking, high bandwidth and low latency
- 3. EFA (fabric adapter) - for high performance computing, bypassing hardware
+ 3. EFA (fabric adapter) - for high performance computing(ML), bypassing hardware. ENA on steroid that helps OS-bypass on non-Windows server. If this is place on Windows server it acts as ENA only
 
 
 *Security Groups vs. Network ACL (NACL)*
@@ -324,6 +331,7 @@ _*VPC, SUBNETS, NETWORKING*_
 
 
 *Elastic Load Balancers*
+  * per region. Can combine with Global accelerator for cross-region traffic. That requires ELB and workload created in each region
 
   * ELBs send traffic to AWS and on-prem resources. Unlike Route 53,
     they use resource IP addresses and you don't get to specify policies
@@ -331,8 +339,8 @@ _*VPC, SUBNETS, NETWORKING*_
     to/from an ELB
   * An *Application Load Balancer (ALB)* makes routing decisions at the
     application layer aka Layer 7 (HTTP/HTTPS) 
-      - supports /path-based routing and host-based routing (i.e. based
         on the content of the request in the host field)
+      - can use weighted target groups, similar to route53 weighted. ***Note: NLB cannot do this.
       - can route requests to one or more ports on each ECS container
         instance in a cluster
       - supports authentication from OIDC compliant IDPs such as Google
@@ -341,10 +349,12 @@ _*VPC, SUBNETS, NETWORKING*_
         - _health checks_. - and routes only to healthy targets
       - enable /access logs /which can get pushed to S3. They log info
         on requester, IP, request type, etc.
+      - there can only 1 listener listening to a port at 1 time(1-1 relationship)
   * A *Network Load Balancer (NLB)* make routing decisions at the
     transport layer aka Layer 4 (TCP/SSL). They can handle millions of
     requests per second with extremely low latency. They don't support
     path-based routing or host-based routing the way ALB does.
+    - Traffic mirroring: mirror network traffic and send to ec2, then have Intrusion Detection System(IDS) or packet capture (PCAP) devices to monitor/analyze. Traffic mirror filter can filter mirror traffic based on some criteria and not by itself can do monitoring/analyzing 
   * A *Classic Load Balancer (CLB)* operates using TCP, SSL, HTTP and
     HTTPS. Not as good at high throughput / low latency as NLB. Also
     unlike NLB, it does not support load balancing to multiple ports on
@@ -375,6 +385,17 @@ _*VPC, SUBNETS, NETWORKING*_
 
 
 *AWS Transit Gateway*
+![](assets/2024-01-23-13-04-35.png)
+allow attachment to following resources
+- One or more VPCs
+
+- One or more VPN connections
+
+- One or more AWS Direct Connect gateways
+
+- One or more transit gateway peering connections
+If you attach a transit gateway peering connection, the transit gateway must be in a different Region.
+
 
   * Central Hub connecting on-prem networks and VPCs.
       - Reduces operational complexity as you can easily add more VPCs,
@@ -440,10 +461,11 @@ _*VPC, SUBNETS, NETWORKING*_
         replicated across other instances
   * Very high performance and low latency
   * Can be cost effective since the cost is included in the instance cost
-
+  * Cannot be added after instance is created/launch
+  * higher IOPS than EBS as it's physical device attached to instance=> fastest storage options 
 
 *EBS*
-
+  * SSD is for IOPS and low queue length and random access, suitable for OLTP DB/ HDD is for throughput with sequential I/O and high queue length
   * General Purpose SSD (gp2, gp3) - for low-latency interactive apps,
     dev&test environments.
       - Can have bursts of CPU performance but not sustained.
@@ -453,6 +475,9 @@ _*VPC, SUBNETS, NETWORKING*_
         CPU performance
       - IOPS is related to volume size, specifically per GB. 
       - These are more $
+      - Io1: consistent IP, max IO/storage=50/1, e.g 10GiB storage => 500IOPS, maximum is 64k per volume for 1280GiB and above, 260k per instance, allow multi attached 
+      ![](assets/2024-01-23-12-45-51.png)
+      - io2:  uses a bucket and credit model to calculate performance, 10x IO/GIB than io1, max is 64k per volume/260k per instance, allow multi attached in same availability zone 
   * In contrast to SSD volumes, EBS also offers HDD volumes:
       - EBS Cold HDD (sc1) lowest cost option for infrequently accessed
         data and use cases like sequential data access
@@ -476,6 +501,7 @@ _*VPC, SUBNETS, NETWORKING*_
   * You can hibernate the instance to keep what's in memory and in the
     EBS, but if you stop or terminate the instance then you lose
     everything in memory and in the EBS storage. Hibernation mode cannot be changed(enabled/disabled) after launch
+  * EBS is replicated automatically within a region, but can only used within a single availability zone
 
 *EFS*
 
@@ -490,10 +516,13 @@ _*VPC, SUBNETS, NETWORKING*_
     as firewall
 
 
-*S3 *
-
+*S3 *   
+![](assets/2024-01-22-06-17-39.png)
+![](assets/2024-01-22-13-07-02.png)
   * durable (99.999999999%)
   * a best practice is to enable versioning and MFA Delete on S3 buckets
+  * replication rules: allow replicate to a different account
+  * can use requester pay feature: requester pays to access/transfer data
   * S3 lifecycle 2 types of actions:
      1. ​​transition actions (define when to transition to another
         storage class)
@@ -523,10 +552,14 @@ _*VPC, SUBNETS, NETWORKING*_
   * Bucket cannot be deleted if bucket policy has deny rule to delete bucket, even if user has delete permission
   * you can only add 1 SQS or SNS at a time for Amazon S3 events notification
   * Integration with route53: bucket name has to be the same name with the registered domain, e.g. bucket name should be `www.example.com` if the route 53 domain is `www.example.com`
+  * Server access logging: logging data about s3 access, less detailed than `cloudtrail data events`, many use both
 *Glacier* 
 
   * slow to retrieve, but you can use *Expedited Retrieval* to bring it
     down to just 1-5min.
+  * Vault lock policy: help you enforce regulatory and compliance requirements, e.g. retain archives for 1 year before they can be deleted:
+  ![](assets/2024-01-23-23-11-41.png)
+  * Vault access policy
   * Public access blocking can be set at account level
   * Public access: Any bucket or object that grants permissions to AllUsers OR AuthenticatedUsers groups. Additionally any bucket policy that does not grant fixed access (Not "\*") to one of the following is considered public:An AWS principal, user, role, or service principal (e.g. aws:PrincipalOrgID), A set of Classless Inter-Domain Routings (CIDRs) using aws:SourceIp, aws:SourceArn, aws:SourceVpc, aws:SourceVpce, aws:SourceOwner, aws:SourceAccount, s3:x-amz-server-side-encryption-aws-kms-key-id, aws:userid, outside the pattern "AROLEID:*", s3:DataAccessPointArn, s3:DataAccessPointAccount
 
@@ -556,6 +589,7 @@ _*VPC, SUBNETS, NETWORKING*_
 *RDS*
 
   * Transactional DB (OLTP)
+  * Has storage autoscaling feature
   * If too much read traffic is clogging up write requests, create an
     RDS read replica and direct read traffic to the replica. The read
     replica is updated *asynchronously*. Multi-AZ creates a read replica
@@ -573,6 +607,7 @@ _*VPC, SUBNETS, NETWORKING*_
     created from the DB snapshot and you need to point to the new instance.
   * Read replica cannot be promoted
   * SQLserver: backup taken on primary-> expect IO suspension. Others have backup using secondary
+  * Enhanced monitoring including process list views for: RDS child processes, RDS processes, OS processes. Note CPU Utilization, Database Connections, and Freeable Memory are provided with regular cloudwatch metrics
 
 *ElastiCache*
 
@@ -619,19 +654,26 @@ _*VPC, SUBNETS, NETWORKING*_
       - if storing data that will be accessed by timestamp, use separate
         tables for days, weeks, months
       - when having millions of records, split the tables using high-cardinality keys
+      - global secondary index: index that uses different partition key and sort key from original table, different througput from original. Diff with global table: global table is cross-region for HA, GSI is for quick access/search and is on same region with original table
+      - local 2ndary index: same partition key, different sortkey from original table, use same provisioned throughput with original
 
 
 *AWS Storage Gateway*
+![](assets/2024-01-25-14-09-12.png)
+![](assets/2024-01-25-14-09-19.png)
 
+  * used for hybrid, integration, and NOT for full migration
   * Replace on-prem without changing workflow
   * Types: File Gateway (for NFS and SMB), Volume Gateway, Tape Gateway. 
   * Stores data in S3 (e.g. for file gateway type, it stores files as
     objects in S3)
   * Provides a cache that can be accessed at low latency, whereas EFS
     and EBS do not have a cache
+  * 2 types of appliances: hardware and VM appliances. Hardware is dedicated machine used if companies do not support virtualization
+  * vs DataSync: SG used for hybrid/integration, DS used for migration to cloud; SG doesn't transfer files as fast as DS, thus use DS to transfer large data; SG can do replication, DS remove data on-prems after migrating data
+![](assets/2024-01-24-10-44-14.png)
 
-
-*Copying and Converting*
+*Copying and Converting* 
 
   * Use *AWS Schema Conversion Tool (SCT)* to convert a DB schema from
     one type of DB to another, e.g. from Oracle to Redshift(heterogenous)
@@ -656,6 +698,7 @@ _*VPC, SUBNETS, NETWORKING*_
     queries on S3 data and write results back. Works natively with
     client-side and server-side encryption. Not the same as QuickSight
     which is just a BI dashboard.
+    ![](assets/2024-01-23-22-51-48.png)
   * *​Amazon S3 Select* - analyze and process large amounts of data
     faster with SQL, without moving it to a data warehouse
   - S3 Data Lakes: Use *Amazon S3* to build Data Lakes.
@@ -664,8 +707,8 @@ _*VPC, SUBNETS, NETWORKING*_
 _*SERVICES FOR ARCHITECTURE*_
 
 *Amazon SQS*
-
-  * ideal for solutions that must be durable and loosely coupled
+![](assets/2024-01-23-13-24-36.png)
+  * ideal for solutions that must be durable and loosely coupled 
   * pull-based (use SNS for pushing messages, especially broadcasting to
     multiple services)
   * _Standard vs. FIFO_: FIFO is very rigorous whereas Standard is
@@ -704,7 +747,12 @@ _*SERVICES FOR ARCHITECTURE*_
   * 3 Flavours:
     - Kinesis Data Stream: real time data streaming and procesing
         * Kinesis Video Stream: video processing (security cameras, face detection, etc)
+        * can use lambda as destination
+        * built in fan-out feature, which is not available for hosted Kafka
+        * Note: If question ask about realtime data process, then this is a suitable response. Option that involves S3/Athena or Redshift is not realtime as that requires persistence before processing
+        ![](assets/2024-01-11-06-10-54.png)
     - Kinesis Data Firehose: data delivery and integration, near `realtime`
+        * although lambda can be integrated, but it just works as interceptor. Destination cannot be Lambda
     - Kinesis Data Analytics: real time analysis of streaming data
     - Firehose is like a Simple Conveyor Belt:
 
@@ -730,10 +778,12 @@ _*SERVICES FOR ARCHITECTURE*_
   * Proxy mode (to execute the Lambda function or HTTP server directly) dynamically
     mapping request data to backend's input format
   * REST API mode to create, publish and manage custom RESTful APIs
+  * configure custom domain: api.example.com => create custom domain and add cert on API gateway => create alias record with `domain name` same with the custom domain above(api.example.com)
 
 
 *Amazon CloudFront*
-
+![](assets/2024-01-20-22-55-13.png)
+  * Cloudfront functions vs Lambda@Edge: cloudfront functions are limited in functionality as it requires millisecond process, not able to connect to network. Also cloudfront function has limited memory and storage 
   * CloudFront distributes files from an _origin_. The origin can be an
     S3 bucket, EC2 instance, ELB, Route 53, or external.
   * CloudFront+S3
@@ -744,8 +794,10 @@ _*SERVICES FOR ARCHITECTURE*_
         user and change S3 bucket permissions so that only the OAI can
         access. This is specific to CloudFront+S3.
   * *Lambda@Edge* is a feature of CloudFront that lets you run code
+  ![](assets/2024-01-23-14-43-03.png)
     closer to users of your application, which improves performance and
-    reduces latency. Alows to run custom code(add header, server different responses)
+    reduces latency. Allows to run custom code(add header, server different responses)
+  * Origin shield: a hub/interceptor between different cloudfront distributions and origins, allowing different distributions to share cache from same origin
   ![](2024-01-09-18-32-48.png) => 
     - When CloudFront receives a request from a viewer (viewer request)
 
@@ -786,7 +838,11 @@ _*SERVICES FOR ARCHITECTURE*_
 
 
 *AWS STS (Security Token Service)*
-
+![](assets/2024-01-22-10-30-25.png)
+![](assets/2024-01-22-10-57-10.png)
+![](assets/2024-01-22-13-09-32.png)   
+  * If app doesn't support SAML => require custom identity broker
+  ![](assets/2024-01-23-12-14-52.png)   
   * request temporary limited-privilege credentials for IAM users, or
     for users that you authenticate such as federated users from an
     on-prem directory
@@ -820,7 +876,10 @@ _*SERVICES FOR ARCHITECTURE*_
     example, you can't add container instances to an IAM group, you
     associate tasks with IAM roles/groups.
 
-
+ *Amazon EKS*
+  * Karpenter or Cluster Autoscaler for node scaling
+  * HPA for pod scaling, requires Kubernetes metrics server to be installed
+  ![](assets/2024-01-23-22-57-16.png)
 ## SECURITY
 
 *Encryption*
@@ -835,11 +894,11 @@ _*SERVICES FOR ARCHITECTURE*_
           + SSE-C: use customer-provided keys and manage them yourself
             (on-prem)   
             Headers: x-amz-server-side-encryption-customer-algorithm; x-amz-server-side-encryption-customer-key; x-amz-server-side-encryption-customer-key-MD5
-          + SSE-S3: Amazon manages the keys   
+          + SSE-S3: Amazon manages the keys, AES256 support   
             Header: x-amz-server-side-encryption
-          + SSE-KMS: keys are managed in Amazon Key Management Service
+          + SSE-KMS: keys are managed in Amazon Key Management Service, not AES256???
           + CloudHSM: generate and use your own encryption keys, held in
-            the cloud in Amazon's HSM
+            the cloud in Amazon's HSM. If HSM gets zeroed all creds are lost and snapshot could not help
   * Data in motion
       - SSL/TLS is for encrypting data in transit, not data at rest.
       - SSL/TLS is synonymous with HTTPS traffic. It goes over port 443.
@@ -848,6 +907,7 @@ _*SERVICES FOR ARCHITECTURE*_
 *Amazon GuardDuty*
 
   * use with CloudWatch+SNS to trigger notifications to services 
+  * detect usage patterns for S3. AWS Macie can generate policy findings, but not usage patterns
 
 
 *IAM*
@@ -864,7 +924,7 @@ _*SERVICES FOR ARCHITECTURE*_
   * You can migrate an account to another AWS organization, e.g.  if you
     divest a business unit
   * _AWS Control Tower_ provides a single location to easily set up your new well-architected multi-account environment and govern 
-    your AWS workloads with rules for security, operations, and internal compliance. 
+    your AWS workloads with rules for security, operations, and internal compliance, can automate account creation
   * _AWS Resource Access Manager (RAM)_ service  helps you to securely share your resources across AWS accounts or within your 
     organization or organizational units (OUs) in AWS Organizations => allow sharing without creating AWS IAM roles
 *Restrict access to resources from a region/country*
@@ -873,23 +933,35 @@ _*SERVICES FOR ARCHITECTURE*_
   - Route 53(only redirect to an error page for example, and not blocking if using IP)
 
 *AWS CloudTrail*
-
+![](assets/2024-01-24-11-48-27.png)
   * Audit trail of _API calls_
-  * Logs / Data Events / (resource operations) aka Data Plane Operations
+  * Logs / Data Events / (resource operations) aka Data Plane Operations(e.g, object access in S3)
   * Logs/Management Events/ (management operations on resources) aka
-    Control Plane Operations
+    Control Plane Operations(e.g. creation/deletion of S3 buckets)
   * Use other tools such as *VPC Flow Logs* to capture network packets
+  * Logs are encrypted using sse-s3 `already`, but optionally can use SSE-KMS
 
 *CICD:
  - CodeCommit: private git repo
  - CodeBuild: continuous integration service that compiles source code, runs tests, and produces ready-to-deploy software packages."
+*DDOS mitigation*:
+ - Cloudfront: absorb with caching and increasing resources to serve traffic. Also it supports rate limiting
+ - WAF and Shield
+ -  Set up alerts in Amazon CloudWatch to look for high Network In and CPU utilization metrics.
+ -  Use an Application Load Balancer with Auto Scaling groups for your EC2 instances. Prevent direct Internet traffic to your Amazon RDS database by deploying it to a new private subnet.
 
+* Health events(AWS health dashboard):
+  - Use service health dashboard for public events
+  - Use personal health dashboard  for events related to current account and receive notifications using eventBridge
 ## MANY MORE AWS SERVICES
 
 Although the AWS Cloud Practitioner certification is not a prerequisite
 for the AWS SAA exam, I found it very helpful to study for the AWS Cloud
 Practitioner, especially to learn the basics of the many AWS services.
-
+  * *AWS AppSync* Graphql API, allow aggregating data for read/write from/to multiple db tables using Pipeline Resolvers. Note that Athena Federated Query can do read from multiple db tables but not write to db, instead data can be written to S3.
+  ![](assets/2024-01-24-14-29-03.png)
+  * *AWS Service Catalog* catalog about services, shared common deployed templates across teams
+  * Workspace: virtual desktops
   * *AWS App Mesh* = for application networking for microservices
     applications
   * *AWS Resource Access Manager* = share a Transit Gateway connection
@@ -898,7 +970,7 @@ Practitioner, especially to learn the basics of the many AWS services.
   * *AWS Step Functions* coordinate multiple AWS services into
     serverless workflows so you can build and update apps quickly.
     Includes long-running executions not supported within Lambda
-    execution limits.
+    execution limits. -> not tolerate duplication/use for only one delivery transaction
   * *AWS Elastic Beanstalk* is a PaaS service for describing and
     provisioning resources. Can be used to quickly deploy and manage
     applications in AWS. Developers upload applications and Beanstalk
@@ -908,6 +980,7 @@ Practitioner, especially to learn the basics of the many AWS services.
     developers build, run, and scale background jobs
   * *AWS CodeStar* quickly develop, build and deploy applications on AWS
   * *AWS Config* manage the config of AWS resources
+  ![](assets/2024-01-23-13-50-50.png); can also be a source of SSM AUtomation to take actions
   * *AWS Batch* batch processing of computing jobs
   * *Amazon Lex* builds conversational interfaces into an application
     using voice and text (think Amazon aLEXa)
@@ -920,10 +993,11 @@ Practitioner, especially to learn the basics of the many AWS services.
   * *Amazon Connect*: call center
   * *Amazon SES*: Simple E-mail Service for sending marketing e-mails
     (like a Marketo or ConstantContact)
-  * *Amazon QuickSight*: BI
+  * *Amazon QuickSight*: BI, similar to PowerBI/Tableau
+  * *AWS ParallelCluster*: use to manage HPC cluster(including job scheduling,auto scaling)
   * *Amazon Elasticsearch Service*: "operational analytics" that you
     visualize. Renamed to Open Search.
-  * *Amazon Neptune*: interactive graphs of DBs
+  * *Amazon Neptune*: interactive graphs of DBs, RDF (Resource Description Framework). For apps that work with   highly connected datasets
   * *AWS Config*: tracks resource inventory, config history and config
     change notifications for the purpose of security and compliance.
     Assess, audit and evaluate the configurations of AWS resources.
@@ -940,13 +1014,14 @@ Practitioner, especially to learn the basics of the many AWS services.
   * *Amazon MSK*: (Amazon Managed Streaming for Kafka) - Run Kafka clusters on AWS,
     enabling real-time data streaming and processing
   * *AWS IoT Core*: connected devices interact securely with cloud
-    applications- related: Monitron: use ML to predict maintenance using sensor on hardware equipment
+    applications- related: Monitron: IOT/use ML to predict maintenance using sensor on hardware equipment
   * *Amazon Cognito* = authentication for mobile devices. Use /identity
     pools/ to provide temp AWS credentials to guest users. /User
     pools /are user directories. Compatible with SAML identity providers.
   * *AWS Outpost*: Fully managed service. Extends AWS infrastructure, services and tools to on-prem
   * *AWS Arfifacts*: Security report and compliance info
-
+  * *Amazon Workdocs*: collaboration system like sharedpoint, not integrate directly with s3
+ 
 
 # Credits
 - [Original article](https://www.stellexgroup.com/blog/aws-solutions-architect-associate-saa-c03-cheat-sheet)

@@ -41,7 +41,13 @@ AWS Created custom DB tech, very high performan. Useful for global and serverles
 - for unpredictable workloads
 - pay per second
 - client talks to aurora proxy fleet
+### Failover with one AZ down
+- If your provisioned or Aurora Serverless v2 cluster contains any reader instances in other AZs, Aurora uses the failover mechanism to promote one of those reader instances to be the new primary instance.
 
+- If your provisioned or Aurora Serverless v2 cluster only contains a single DB instance, or if the primary instance and all reader instances are in the same AZ, make sure to manually create one or more new DB instances in another AZ.
+
+- If your cluster uses Aurora Serverless v1, Aurora automatically creates a new DB instance in another AZ. However, this process involves a host replacement and thus takes longer than a failover.
+=> v1 doesn't provide read-replica so no direct failover????
 ## Aurora multi master
 - all nodes are read/write nodes there is no master
 - replication between all nodes
@@ -97,3 +103,10 @@ AWS Created custom DB tech, very high performan. Useful for global and serverles
 ## Cluster endpoint vs custom endpoint
 - cluster endpoint: main endpoint that allows write to primarydb
 - custom: can include write instance and read instances, or just for read
+
+## Once instance only failover
+- For Aurora: if the instance is down, another one will be created in the same AZ, but if that is unsuccessful instance is created on a new AZ
+- For Aurora Serverless:
+  - v1: a new instance is created on different AZ
+  - v2: requires manual creation of new instance(v2 supports read replicas so if there is read replica available the failover can take place automatically, similar to Aurora multiAZ)
+Note: for AUrora multiAZ: CNAME points to read replica

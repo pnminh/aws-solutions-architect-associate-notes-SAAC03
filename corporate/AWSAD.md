@@ -1,6 +1,6 @@
 ![[Pasted image 20221031085227.png]]
 # Directory Service
-
+![](assets/2024-01-24-12-30-19.png)
 ## TLDR
 A collection of sub services which allows companies to leverage directory authentication within AWS. Supports Microsoft Active Directoy.
 

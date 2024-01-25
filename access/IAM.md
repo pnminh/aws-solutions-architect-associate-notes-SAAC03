@@ -110,8 +110,8 @@ AWS IAM is a global service. Its used in nearly all other services to control pe
 - when you assume a role, you give up all previous persmissions
 - Resource based if a Iam entity needs to do multiple things on diffrent accounts
 
-### [[EventBride]]
-- when [[EventBride]] runs any task it needs access for the target service
+### [[EventBridge]]
+- when [[EventBridge]] runs any task it needs access for the target service
 - some service support iam some use resource based policies
 
 ### Cross Account

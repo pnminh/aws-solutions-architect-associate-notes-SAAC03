@@ -19,6 +19,8 @@ NoSQL Serverless DB. Tons of features and can be global.
 
 ##  Capacity Modes
 - provisoned capacity with optional autoscaling
+  - if autoscaling is disabled, initial provision capacity is fixed
+  - otherwise, initial provision capacity is for init, then autoscaling kicks in and can change the numbers
 - on demand capacity
 - can change modes with no downtime
 

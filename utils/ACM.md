@@ -4,5 +4,5 @@
 
 
 ## IAM certificate Store
-- used for regions where ACM is not available
+- only used for regions where ACM is not available
 - can be used via cli

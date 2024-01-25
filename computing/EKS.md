@@ -32,3 +32,12 @@ Kubernetes in AWS. [[ECS]] Default options are not Kubernetes, but AWS own tech.
 ## etcd encryption
 By using AWS Secret Manager with a new AWS KMS key, you can add an extra layer of security to your EKS cluster's etcd key-value store. To do this, you need to create a new KMS key in the AWS KMS console, then create a new secret in the AWS Secret Manager console, specifying the new KMS key as the encryption key. Finally, you can configure your EKS cluster to use the new secret by creating a Kubernetes secret object that references the AWS Secret Manager secret.
 https://aws.amazon.com/blogs/containers/using-eks-encryption-provider-support-for-defense-in-depth/
+
+## EKS Anywhere vs Outpost
+- Both support on-prem/co-location data center
+Anywhere:
+- Can run with different infra(VM/bare metal)
+- Can run as totally disconnected or fully connected with AWS cloud
+Outpost
+- Can only runs on AWS purposed-built hardware, which requires purchase from AWS
+- Can only run with fully connected mode to AWS cloud 

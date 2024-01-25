@@ -12,10 +12,10 @@ A Group of [[EC2]] Instances scaled horizontally, can use an [[ELB]] or work wit
 - if instance is unhealthy it will be terminated and recreated
 - set desired capacity
 
-## Launch template
+## Launch template(recommended)
 - similar to launch config
 - specifies same stuff
-- allows for multiple versions of a template
+- allows for multiple versions of a template(means allow update)
 - can mix on demand and spot instances
 
 ## Launch configuration
@@ -25,7 +25,7 @@ A Group of [[EC2]] Instances scaled horizontally, can use an [[ELB]] or work wit
 - key pair
 - [[SecurityGroup]]
 - block device mapping
-- can not be modified but must be swaped if already in use
+- can not be modified but must be swaped if already in use(immutable)
 
 ### [[EC2]] Tencacy
 - dedicated before other configs

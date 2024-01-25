@@ -16,8 +16,9 @@
 - uri strings
 - size constraints
 - geo matching
-- rate based rules
+- rate based rules and regular rules
 - rules are region, for [[Cloudfront]] they are global
+
 ## vs AWS Network Firewall
 AWS Network Firewall (Level 4): Operates at the network layer (Layer 4) of the OSI model. It deals with IP addresses, protocols, and ports. This is commonly known as a stateful firewall, where filtering decisions are made based on information at the transport layer.
 

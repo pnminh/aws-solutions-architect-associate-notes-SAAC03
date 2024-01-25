@@ -23,3 +23,5 @@ Transfer data from 3rd party (SasS) Systems into and out of AWS.
 ## Frequency
 - scheduled
 - on demand
+## vs AppSync
+- Appsync is GrapQL service that can works directly against DynamoDb, without needs for any intermediate workload(EC2, Lambda)

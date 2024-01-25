@@ -38,7 +38,7 @@ Kinesis is a set of services for streaming real time or next to real time data i
 - kinesis data analytics
 
 ### Retention
-- between 1 and 365 days
+- between 1(default) and 365 days
 - can replay data
 - immutabilty
 

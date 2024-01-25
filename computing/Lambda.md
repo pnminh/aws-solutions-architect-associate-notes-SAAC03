@@ -77,3 +77,6 @@ If exceed => 429 error
 #### TMP
 - can use /tmp to load other files after/on startup
 
+### Encryption
+- Lmabda uses KMS key to encrypt envs by default, but the default key makes other see plaintext data
+- Use helpers and custom KMS key to encrypt data instead

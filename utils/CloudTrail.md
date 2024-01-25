@@ -20,7 +20,7 @@
 ## CloudTrail Insights Events:
 - ML
 - Detect unusal activity in write events
-- send to [[S3]] , [[EventBride]] and cloudtrail console
+- send to [[S3]] , [[EventBridge]] and cloudtrail console
 
 ## Security
 - logs are encrypted by default using [[KMS]] AWS Manged keys

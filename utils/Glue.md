@@ -23,4 +23,12 @@
 - kafka
 - MSK
 ## vs AWS EMR
-- always choose Glue over EMR for ETL as it's serverless and ETL specific
+- choose Glue over EMR for ETL as it's serverless and ETL specific
+- Choose EMR if big data tasks more than ETL are required
+## vs Flink Studio
+- Flink studio is for streaming data
+## Triggering
+- Event(e.g. SQS): use for realtime processing
+  ![](assets/2024-01-22-11-15-29.png)
+- Scheduled
+  

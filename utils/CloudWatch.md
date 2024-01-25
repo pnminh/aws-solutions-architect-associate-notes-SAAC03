@@ -7,7 +7,7 @@ Central service for all logs and metrics in AWS.
 ## Features
 - can setup alarms
 - can stop, terminate, reboot and recover [[EC2]] instances
-- can trigger [[Lambda]] or [[EventBride]]
+- can trigger [[Lambda]] or [[EventBridge]]
 
 ## Cloudwatch Metrics
 - metrics for every service in AWS
@@ -77,7 +77,7 @@ Central service for all logs and metrics in AWS.
 - can use additional resources ([[RDS]], [[S3]], [[SNS]] ...)
 - Powered by Sage maker
 - reduce time to troubleshoot
-- alters and findigs are sent to [[EventBride]] and [[SSM]] OpsCenter
+- alters and findigs are sent to [[EventBridge]] and [[SSM]] OpsCenter
 
 ### Export
 -  to s3 up to 12 hours
@@ -114,7 +114,7 @@ Central service for all logs and metrics in AWS.
 
 ## Cloudwatch Alarams
 - trigger notifications from any metric
-
+- can trigger EC2 actions
 ### Stages
 - OK
 - Inssufficent Data

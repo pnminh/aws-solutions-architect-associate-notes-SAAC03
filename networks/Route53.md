@@ -53,7 +53,8 @@ AWS Nameserver and Domain Name register Service.
 
 ### Latency based
 - route to record with least latency for user
-
+### Fail-over
+- need to configured running stack as failover
 ### GeoProximity
 - Requires route 53 traffic flow.
 - Proximity(distance) between request location and the resources. E.g. 150km between the user's IP location and EC resource location. Smallest one will be chosen 

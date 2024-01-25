@@ -10,3 +10,5 @@ Dashboard and Service to check the configuration and pricing of your AWS Account
 ## Limit Checks
 ![[Pasted image 20221103222629.png]]
 Used for Quota Monitoring Across Multi Accounts.
+## vs AWS Config
+- Trust advisor doesn't have config rules, just provide best practices

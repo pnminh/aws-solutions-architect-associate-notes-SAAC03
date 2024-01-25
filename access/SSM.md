@@ -15,3 +15,5 @@ Instead of using SSH or [[EC2InstanceConnect]] you can use the Session Manager t
 ## How it works
 - SSM agent from EC2 initiate websocket connection through 443 to AWS Systems manager service
 - EC2 IAM profile role needs to have access to SSM, not the other way around
+## SSM Fleet manager
+- one of the many capabilities of the AWS Systems Manager that provides a unified user interface (UI) experience in remotely managing your nodes/EC2 instances running on AWS or on-premises

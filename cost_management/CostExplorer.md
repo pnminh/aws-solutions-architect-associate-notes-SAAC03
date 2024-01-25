@@ -13,10 +13,10 @@ Finer detail of cost than [[AWSBilling]] but this is a paid service.
 - Helps Choose a [[SavingsPlans]]
 - Forecast usage up to 12 months based on previous usage
 
-## Cost and usage report
+## Cost and usage report(CUR)
 - only categoried by AWS services
 ## Custom report, e.g. based on department
-- using tag as filter in cost explorer
+- using tag as filter in cost explorer/cost allocation tags
 
 ## Vs Budgets
 - Cost explorer breaks down cost

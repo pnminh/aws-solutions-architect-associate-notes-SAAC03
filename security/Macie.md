@@ -3,6 +3,7 @@
 - uses ML
 - discover and protect sensitive Data on S3
 - Personal identifiable Information
+- generate policy findings and sensitive data findings
 
 ## vs fraud detector
 Macie is like a detective for your files, looking for secrets/creds/sensitive data.
