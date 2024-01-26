@@ -78,7 +78,7 @@ Central service for all logs and metrics in AWS.
 - Powered by Sage maker
 - reduce time to troubleshoot
 - alters and findigs are sent to [[EventBridge]] and [[SSM]] OpsCenter
-
+- integrate with logs from Container Insights
 ### Export
 -  to s3 up to 12 hours
 - api call is createexporttask
@@ -138,3 +138,6 @@ Central service for all logs and metrics in AWS.
 
 ### RDS metrics
  `CloudWatch` gathers metrics about CPU utilization from the `hypervisor` for a DB instance, and `Enhanced Monitoring` gathers its metrics from an `agent` on the instance. As a result, you might find differences between the measurements, because the hypervisor layer performs a small amount of work. 
+
+### vs Container Insights:
+- Container Insights is just collecting/aggregating/summarizing logs/metrics for pods, Application Insights does ML/AI

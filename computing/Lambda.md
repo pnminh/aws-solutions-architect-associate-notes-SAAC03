@@ -5,6 +5,7 @@
 AWS Lambda means you dont care about any infrastructure, you just upload a function to aws. You can than use that function from other services like  [[APIGateway]], [[SNS]] or even [[CLI]]. You upload Lambda code as a zip.
 
 ## Features
+- provide direct URL for HTTP(s) connectivity. no need API gateway in front
 - Run code serverless
 - Pay per compute time
 - Scaling is automated

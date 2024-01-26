@@ -12,7 +12,7 @@ AWS Backup is a service to centraly manage and review your backup strategies.
 - can create backup policies (backup plans)
 - tag based
 
-## Supported
+## Supported: Only AWS resources
 - [[EC2]] 
 - [[EBS]]
 - [[S3]]

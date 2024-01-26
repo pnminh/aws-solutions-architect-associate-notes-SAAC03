@@ -32,7 +32,8 @@ AWS Created custom DB tech, very high performan. Useful for global and serverles
 - only read
 - reader endpoint does load balancing
 - can enable replica autoscaling
-
+- cross-region replication for MySQL but not Postgres. Use global db for Postgres instead
+- cross-region replication is much faster than RDS for MySQL
 ## Custom Endpoints
 - subset of aurora instances as custom endpoint(e.g. larger instance type for analytical queries)
 
@@ -88,10 +89,9 @@ AWS Created custom DB tech, very high performan. Useful for global and serverles
 
 ### Cloning
 - create a new aurora cluster from a existing one
-- faster than snapshot & restore
+- faster than snapshot & restore(used by RDS). Note: clone not supported with RDS
 - cost effective
 - usful to create staging
-
 ### AWS Backup
 - Allow retention above limit of automated backups, e.g 80 days
 - Backup plan does automation with backup that is outside of Aurora automated one, e.g. once a day

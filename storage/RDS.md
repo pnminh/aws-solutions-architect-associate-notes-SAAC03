@@ -103,3 +103,8 @@ An authentication token is a unique string of characters that Amazon RDS generat
 
 ## RDS events:
 - Only for DB instance/AWS events, not related to data events(INSERT, DELETE, UPDATE)
+
+## MS SQL Server
+- encryption as rest is called transparent data encryption(TDE)
+- Does not support IAM DB authentication(only MYSQL and Postgres support)
+- Can force `SSL` using `rds.force_ssl` parameter and set to `true`(false by default), and require reboot to take effect

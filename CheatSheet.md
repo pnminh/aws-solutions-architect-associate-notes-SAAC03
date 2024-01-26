@@ -53,12 +53,15 @@ Practitioner, especially to learn the basics of the many AWS services.
   * On-Demand Instances - the default option, for short-term ad-hoc
     requirements where the job can't be interrupted
   * On-Demand Capacity Reservations - the only way to reserve capacity
-    for blocks of time such as 9am-5pm daily
+    for blocks of time such as 9am-5pm daily. Pros: reserve capacity, Cons: no billing discount vs on-demand(unless also have reserved instance plan), have to pay for the whole time of capacity reservation even if instances do not run. This is only supported with 
+    - Capacity reservation is only supported with `On-Demand Capacity Reservations` and `Zonal Reserved Instances` plan, not `Regional Reserved Instances`, although `On-Demand Capacity Reservations` can be applied to `Regional Reserved Instances` but only guaranteed for an available zone.
+    ![](assets/2024-01-25-22-05-16.png)
   * ​Spot instance - highest discount potential (50-90%) but no
     commitment from AWS, could be terminated with 2min notice. Could use
     for grid and high-performance computing.
   * Reserved Instances - for long-term workloads, /1 or 3 year
     commitment/ in exchange for 40-60% discount
+  * Saving plans, commitment to pay for number of compute per hour upfront to get discount. So even if the compute is not used it still gets charged
   * Dedicated Instances - run on hardware dedicated to 1 customer (more $$)
   * Dedicated Host - fully dedicated and /physically
     isolated/ server. Allows you to use your server-bound
@@ -105,6 +108,7 @@ Practitioner, especially to learn the basics of the many AWS services.
 ![](assets/2024-01-22-07-52-17.png)
   * **Cluster placement group** = packs instances close together inside an
     AZ to achieve low latency, high throughput - use for HPC
+    - If receiving `insufficient capacity error`when adding new instances => underlying hardware capacity issue => stop and restart instances in the group as that allows moving instances to a different hardware that has capacity
   * **Partition placement group** = separate instances into logical
     partitions such that instances in one partition do not share
     hardware with instances in another partition. Gives you control and
@@ -116,7 +120,8 @@ Practitioner, especially to learn the basics of the many AWS services.
 
 
 *Scaling Instances*
-
+![](assets/2024-01-25-15-43-38.png)
+  * Lifecycle hooks: `Pending` for scale-out and `terminating` for scale-in
   * In high-availability contexts you use an *Auto-Scaling Group
     (ASG)* to automatically launch and stop instances, and an *Elastic
     Load Balancer (ELB)* to distribute traffic among the instances
@@ -132,7 +137,8 @@ Practitioner, especially to learn the basics of the many AWS services.
         morning at 9am)
       o **Dynamic** - scale in response to an event or alarm
       o **Step** - configure multiple changes to scaling based on multiple
-        events
+        events. Warmup time can be added so instance is not counted as active until ready,but still counted against target scaling
+        ![](assets/2024-01-25-14-31-30.png)
         ![](assets/2024-01-25-14-00-05.png)
       o **Target Tracking**- select a metric and a target value to represent the ideal average utilization or throughput level. This is similar to how a thermostat maintains a target temperature.
       o _NOTE: AWS recommends using target tracking over step scaling,
@@ -179,10 +185,13 @@ _*VPC, SUBNETS, NETWORKING*_
     diff with VPN cloudhub: cloudhub connects multiple on-prem networks (VPN) to a VPC ![](assets/2024-01-20-22-48-41.png)
   * Connect your VPCs to your on-premises networks using *AWS Virtual
     Private Network (AWS VPN)*.
-  * For IPv6, you can use an **Egress-only** internate gateway to allow 
-    outbound only communition to the Internet over **IPv6**
+  * For IPv6, you can use an **Egress-only** internet gateway to allow 
+    outbound only communition to the Internet over **IPv6**. It associates with private subnet
   * Network access analyzer: identify unintended network access to VPC
-
+*Wavelength*
+- a zone that includes 5G network, part of VPC. Apps on the zone runs within carrier network=> no to little hoop
+  ![](assets/2024-01-25-15-59-21.png)
+- 
 *Subnets*
 
   * A VPC is housed within a Region, and a subnet maps 1-to-1 with
@@ -337,6 +346,7 @@ _*VPC, SUBNETS, NETWORKING*_
     they use resource IP addresses and you don't get to specify policies
     such as a weighted policy. *VPC flow logs* show traffic going
     to/from an ELB
+  * Cross-zone LB allows the LB to route traffic to instances in different zones. If it's disabled the ELB in an availability zone just routes to the instances in its zone. Enabled by default for ALB, disabled by default for NLB and GLB
   * An *Application Load Balancer (ALB)* makes routing decisions at the
     application layer aka Layer 7 (HTTP/HTTPS) 
         on the content of the request in the host field)
@@ -348,7 +358,7 @@ _*VPC, SUBNETS, NETWORKING*_
       - periodically sends messages to its targets to check their status
         - _health checks_. - and routes only to healthy targets
       - enable /access logs /which can get pushed to S3. They log info
-        on requester, IP, request type, etc.
+        on requester, client IP(underlying instances may not have this info), request type, etc.
       - there can only 1 listener listening to a port at 1 time(1-1 relationship)
   * A *Network Load Balancer (NLB)* make routing decisions at the
     transport layer aka Layer 4 (TCP/SSL). They can handle millions of
@@ -432,23 +442,35 @@ If you attach a transit gateway peering connection, the transit gateway must be 
   * *​AWS SAM (Serverless Application Model)* is an extension of
     CloudFormation for packaging, testing and deploying _serverless_
     applications
-
+  * `Resources` is the only section that is required
 
 *Disaster Recovery (DR)*
-
+![](assets/2024-01-26-09-48-56.png)
   * DR approaches
       - Backup and restore = lowest cost, just create backups
+      ![](assets/2024-01-26-09-52-39.png)
       - Pilot Light = small part of core services that is running and
-        syncing data or documents
+        syncing data or documents. DB always on, only core compute services are on(like a torch that can flame up if needed). 
+        ![](assets/2024-01-26-09-54-08.png)
+        - Elastic Diaster Recovery is the main service that can help
+        ![](assets/2024-01-26-09-59-49.png)
+          - maintain data copy and switched-off resources in staging
+          - when failover event triggered, staged resources are used to automatically create full-capacity deployment in target vpc
       - Warm Standby = scaled down version of a fully functional
         environment that is actively running
+        ![](assets/2024-01-26-10-01-59.png)
       - Multi-site = on-prem and in AWS in an active-active configuration
+      ![](assets/2024-01-26-10-02-28.png)
   * For disaster recovery in a different region, create a AMI from your
-    EC2 instance and copy it into a 2nd region. 
+    EC2 instance and copy it into a 2nd region.  
 
 
 ## STORAGE
-
+![](assets/2024-01-26-11-52-30.png)
+- Storage optimized: high random I/O, low latency to local storage
+- Memory optimized: large workloads processed in-memory
+- Compute Optimized: intensive tasks that require high-performance processors, e.g. batch processing and media transcoding
+- General purpose: most basic type, balance between these 3
 *Instance Store*
 
   * Block-level storage (with EBS disk that is physically attached to
@@ -496,12 +518,13 @@ If you attach a transit gateway peering connection, the transit gateway must be 
     Backup snapshots are incremental, but the deletion process is designed
     so that you only need to retain the most recent snapshot. 
   * iSCSI is block protocol, whereas NFS is a file protocol
-  * EBS supports encryption of data at rest and encryption of data in
-    transit between the instance and the EBS volume. 
+  * EBS supports encryption of data at rest(symmetric key) and encryption of data in
+    transit between the instance and the EBS volume. `EBS encryption by default` can be set for a region but will not affect existing ones. New ones will need to be encrypted.
   * You can hibernate the instance to keep what's in memory and in the
     EBS, but if you stop or terminate the instance then you lose
     everything in memory and in the EBS storage. Hibernation mode cannot be changed(enabled/disabled) after launch
   * EBS is replicated automatically within a region, but can only used within a single availability zone
+  * EBS still works normally when snapshot is taken as the job runs async
 
 *EFS*
 
@@ -514,11 +537,16 @@ If you attach a transit gateway peering connection, the transit gateway must be 
   * After a period up to *90 days*, you can transition unused data to EFS IA
   * Protected by *EFS Security Groups* to control network traffic and act
     as firewall
+  * 2 storage types: general and high I/O, has to be set at provisioning time, no cost diff
+  * 2 throughput modes: burstable(only has high throughput for a period of time), provisioned throughput(required for apps that need persistent throughput)
 
 
 *S3 *   
+![](assets/2024-01-25-16-40-05.png)
+![](assets/2024-01-25-14-54-25.png)
 ![](assets/2024-01-22-06-17-39.png)
-![](assets/2024-01-22-13-07-02.png)
+![](assets/2024-01-22-13-07-02.png) 
+  * Objects can be deleted right away without incurring charge, others require at least 30days
   * durable (99.999999999%)
   * a best practice is to enable versioning and MFA Delete on S3 buckets
   * replication rules: allow replicate to a different account
@@ -553,6 +581,7 @@ If you attach a transit gateway peering connection, the transit gateway must be 
   * you can only add 1 SQS or SNS at a time for Amazon S3 events notification
   * Integration with route53: bucket name has to be the same name with the registered domain, e.g. bucket name should be `www.example.com` if the route 53 domain is `www.example.com`
   * Server access logging: logging data about s3 access, less detailed than `cloudtrail data events`, many use both
+  * Object uploaded by default belong to AWS account that upload it and not bucket owner. To give bucket owner full control, set `bucket-owner-full-control` Object ACL. This can be enforced with bucket policy that requires that ACL for the object to be uploaded
 *Glacier* 
 
   * slow to retrieve, but you can use *Expedited Retrieval* to bring it
@@ -590,6 +619,7 @@ If you attach a transit gateway peering connection, the transit gateway must be 
 
   * Transactional DB (OLTP)
   * Has storage autoscaling feature
+  * `backtrack` feature to rewind DB to previous version, help with recovering data
   * If too much read traffic is clogging up write requests, create an
     RDS read replica and direct read traffic to the replica. The read
     replica is updated *asynchronously*. Multi-AZ creates a read replica
@@ -616,7 +646,7 @@ If you attach a transit gateway peering connection, the transit gateway must be 
   * As a cache, it is an in-memory key/value store database (more OLAP
     than OLTP)
   * *Redis* vs. *Memcached*
-      - Redis has _replication and high availability,_ whereas Memcached
+      - Redis has replication(using partition/sharding for example) and high availability(Amazon ElastiCache for Redis Global Datastore: using 1 write cluster in 1 region and several read clusters cross-region that can be promoted in case of write node failure),_ whereas Memcached
         does not. Memcached allows _multi-core multi-thread_ however.
       - Redis can be token-protected (i.e. require a password). Use the
         _AUTH command_ when you create the Redis instance, and in all
@@ -624,6 +654,7 @@ If you attach a transit gateway peering connection, the transit gateway must be 
       - For Redis, _ElastiCache in-transit encryption_ is an optional
         feature to increase security of data in transit as it is being
         replicated (with performance trade-off)
+      - Memcached cluster on AWS provides auto discovery of cache node and replace failed not automatically. Auto discovery allows client to get all the memcached nodes. The way write works is memcached client, and not the cluster itself, does balancing using hashing to select a specific endpoint for a key, and this inherently doesn't replicate data across nodes
   * Use case: accelerate autocomplete in a web page form
   * Cache Strategies
       - Write-through: data is written to the cache and the underlying data simultaneously. 
@@ -636,7 +667,7 @@ If you attach a transit gateway peering connection, the transit gateway must be 
 
   * Use when the question talks about key/value storage, near-real time
     performance, millisecond responsiveness, and very high requests per
-    second
+    second. ***Millisecond response time: DynamoDB, sub-second: Redshift
   * Not compatible with relational data such as what would be stored in
     a MySQL or RDS DB
   * No concept of read replica like in RDS and Aurora. For read-heavy or
@@ -689,9 +720,9 @@ If you attach a transit gateway peering connection, the transit gateway must be 
 
   * *Redshift* is a columnar data warehouse that you can use for complex
     querying across petabytes of structured data. It's _not serverless_,
-    it uses EC2 instances that must be running. Use *Amazon RedShift Spectrum* 
+    it uses EC2 instances that must be running. Use *Amazon RedShift Spectrum*
     to query data from S3 using a RedShift cluster for massive
-    parallelism 
+    parallelism, note this is not standalone serverless service like Athena and requires Redshift cluster to be available. It provides `serverless query processing`
     * *Aqua for RedShift*: Hardware cache for Redshift. 
         10x query performance. Low cost. Easy to deploy.
   * *Athena* is a serverless (aka inexpensive) solution to do SQL
@@ -699,6 +730,7 @@ If you attach a transit gateway peering connection, the transit gateway must be 
     client-side and server-side encryption. Not the same as QuickSight
     which is just a BI dashboard.
     ![](assets/2024-01-23-22-51-48.png)
+      - use parquet format(columnar format) for objects stored on S3 as 2x faster to unload and 6x less storage(Glue can do ETL to convert other formats into parquet)
   * *​Amazon S3 Select* - analyze and process large amounts of data
     faster with SQL, without moving it to a data warehouse
   - S3 Data Lakes: Use *Amazon S3* to build Data Lakes.
@@ -718,9 +750,9 @@ _*SERVICES FOR ARCHITECTURE*_
       o ​Short polling is the default. When you poll the SQS, it doesn't
         wait for messages to be available in the queue to respond. It
         checks a subset of servers for messages and may respond that
-        nothing is available yet.
+        nothing is available yet.(WaitForMessagee value = 0)
       o Long polling waits for a message to be in the queue before
-        responding, so it uses fewer total requests and reduces cost.
+        responding, so it uses fewer total requests and reduces cost.(WaitForMessagee value > 0)
   * _batching_ adds efficiency
   * SQS doesn't prioritize items in the queue. If you need to prioritize
     use multiple queues, one for each priority type
@@ -753,6 +785,8 @@ _*SERVICES FOR ARCHITECTURE*_
         ![](assets/2024-01-11-06-10-54.png)
     - Kinesis Data Firehose: data delivery and integration, near `realtime`
         * although lambda can be integrated, but it just works as interceptor. Destination cannot be Lambda
+        * target storage, not complicated streaming processing
+        * not supporting DynamoDB as target
     - Kinesis Data Analytics: real time analysis of streaming data
     - Firehose is like a Simple Conveyor Belt:
 
@@ -835,6 +869,7 @@ _*SERVICES FOR ARCHITECTURE*_
     from the AWS edge network. You can migrate existing IPv4 (/24) IPs
     rather than creating new.
   * suitable for non-HTTP, such as gaming(UDP), or HTTP that needs staticIP
+  * good candidate if corporate network requires small sets of IPs to whitelist
 
 
 *AWS STS (Security Token Service)*
@@ -866,7 +901,7 @@ _*SERVICES FOR ARCHITECTURE*_
   * Highly scalable / high performance, lets you run applications on an
     EC2 cluster 
   * ECS Launch Types
-     1. *Fargate Launch Type* is serverless, managed by AWS. Comes with 20 GiB of free ephemeral storage
+     1. *Fargate Launch Type* is serverless, managed by AWS. Comes with 20 GiB of free ephemeral storage. Fargate can stand behind ELB
      2. *EC2 Launch Type* gives you direct access to the instances, but
         you have to manage them
   * ECS uses the  _ECS Service Auto Scaling_ (aka Application Auto
@@ -877,9 +912,10 @@ _*SERVICES FOR ARCHITECTURE*_
     associate tasks with IAM roles/groups.
 
  *Amazon EKS*
-  * Karpenter or Cluster Autoscaler for node scaling
+  * Karpenter(AWS specific, more features) or Cluster Autoscaler(opensource) for node scaling
   * HPA for pod scaling, requires Kubernetes metrics server to be installed
   ![](assets/2024-01-23-22-57-16.png)
+  * Using `aws-iam-authenticator` webhook for mapping IAM to K8s RBAC. Note `kube-system/aws-auth` config map is used for mapping config
 ## SECURITY
 
 *Encryption*
@@ -958,6 +994,7 @@ _*SERVICES FOR ARCHITECTURE*_
 Although the AWS Cloud Practitioner certification is not a prerequisite
 for the AWS SAA exam, I found it very helpful to study for the AWS Cloud
 Practitioner, especially to learn the basics of the many AWS services.
+  * *AWS Resource Groups Tag Editor* add, edit, and delete tags to multiple AWS resources at once 
   * *AWS AppSync* Graphql API, allow aggregating data for read/write from/to multiple db tables using Pipeline Resolvers. Note that Athena Federated Query can do read from multiple db tables but not write to db, instead data can be written to S3.
   ![](assets/2024-01-24-14-29-03.png)
   * *AWS Service Catalog* catalog about services, shared common deployed templates across teams
@@ -975,7 +1012,8 @@ Practitioner, especially to learn the basics of the many AWS services.
     provisioning resources. Can be used to quickly deploy and manage
     applications in AWS. Developers upload applications and Beanstalk
     handles the deployment details. Note that it's not serverless, it
-    relies on EC2 instances.
+    relies on EC2 instances. This can spin up ECS cluster. The app logs are stored on S3/Cloudwatch using cloudwatch agent. The server logs can be optionally stored on S3/Cloudwatch logs
+    ![](assets/2024-01-25-16-34-18.png)
   * *AWS Simple Workflow Service (SWF)* is for executing tasks. Helps
     developers build, run, and scale background jobs
   * *AWS CodeStar* quickly develop, build and deploy applications on AWS

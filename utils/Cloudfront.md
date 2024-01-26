@@ -99,3 +99,24 @@
 
 ## Host s3 static files that are not publically accessible
 ![](2024-01-10-00-01-37.png)
+## Note
+- cannot use autoscaling group as origin, but can use load balancer which can interract with autoscaling group
+- failover require 2 running stacks, 1 is primary and the other 2ndary standby
+
+## [Invalidating cache strategy](https://docs.aws.amazon.com/whitepapers/latest/build-static-websites-aws/controlling-how-long-amazon-s3-content-is-cached-by-amazon-cloudfront.html)
+- Set Minimum TTL and Maximum TTL specs on Cloudfront
+- Set metadata Cache-Control: max-age=[seconds] on S3 objects
+![](assets/2024-01-26-12-22-45.png)
+- User versioning, each version has a different link. Can use S3 object version
+```java
+    S3Properties s3Properties... // Custom properties pulled from a config file
+    String cloudfrontUrl = "https://" + s3Properties.getCloudfrontDomain() + "/" + 
+            documentS3Key + "?versionId=" + documentS3VersionId;
+
+    URL cloudfrontSignedUrl = new URL(CloudFrontUrlSigner.getSignedURLWithCannedPolicy(
+            cloudfrontUrl,
+            s3Properties.getCloudfrontKeypairId(),
+            SignerUtils.loadPrivateKey(s3Properties.getCloudfrontKeyfilePath()),
+            getPresignedUrlExpiration()));
+```
+- Use CloudFront invalidation requests(send request to Cloudfront to force the invalidation) => may take time

@@ -60,8 +60,9 @@ A stack of AWS resources, more clearly the connectivity and setup options for an
 - MTU 15kbs if [[VPN]]
 - has a route table
 - route propagation
-- gives double throughput of virtual private gateway by using ECMP support
-
+- gives double throughput of virtual private gateway by using ECMP(equal-cost multipath routing) support. ECMP supports spreading throughput to multiple vpn connections as well.
+  - AWS Transit Gateway also enables you to scale the IPsec VPN throughput with equal cost multi-path (ECMP) routing support over multiple VPN tunnels. A single VPN tunnel still has a maximum throughput of 1.25 Gbps. If you establish multiple VPN tunnels to an ECMP-enabled transit gateway, it can scale beyond the default maximum limit of 1.25 Gbps.
+![](assets/2024-01-25-14-29-28.png)
 ## VPC Sharing
 - share one or more subnets within other accounts beloning to the same [[AWSOrganisations]]
 - every account can only work with the resources they created
